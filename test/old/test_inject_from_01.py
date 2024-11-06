@@ -41,6 +41,16 @@ def test_create_registry_pass_modules_in_init_works():
     assert registry.get(logging.Logger) is not None
     assert len(registry_builder._modules) == 2
 
+def test_get_from_registry_by_type():
+    """Test example"""
+    registry_builder = RegistryBuilder(modules=[RegLogging])
+    assert len(registry_builder._modules) == 1
+    registry: Registry = registry_builder.build()
+    assert registry.get(logging.Logger) is not None
+    assert registry.get(RegDatabase) is None
+    print("NNNNNNNNNNNNNNNn")
+    print(registry.get(RegDatabase))
+    print(registry._modules)
 
 # ---------------------------------------------
 def test_things():
