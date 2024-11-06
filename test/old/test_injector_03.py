@@ -72,7 +72,7 @@ class TestInjector3(unittest.TestCase):
             )
             pass
 
-        registry = di.RegistryBuilder().add_setup(configure_for_testing).build()
+        registry = di.Registry().add_setup(configure_for_testing).build()
         service = registry.get(Test_MyService)
         self.assertEqual(service.get_db().connection_string, "file:memdb1?mode=memory&cache=shared3")
 
@@ -86,7 +86,7 @@ class TestInjector3(unittest.TestCase):
             )
             pass
 
-        registry = di.RegistryBuilder().add_setup(configure_for_testing).build()
+        registry = di.Registry().add_setup(configure_for_testing).build()
         self.assertTrue(True)
         service = registry.get(Test_MyService)
         self.assertEqual(service.get_db().connection_string, "file:memdb1?mode=memory&cache=shared3")
@@ -99,7 +99,7 @@ class TestInjector3(unittest.TestCase):
             binder.bind(TMyDatabaseConfig, to=lambda: None)
             pass
 
-        registry = di.RegistryBuilder().add_setup(configure_for_testing).build()
+        registry = di.Registry().add_setup(configure_for_testing).build()
         self.assertTrue(True)
         service = registry.get(Test_MyService)
         self.assertIsNone(service.get_db())
@@ -112,7 +112,7 @@ class TestInjector3(unittest.TestCase):
             # binder.bind(Test_MyDatabaseConfig, to=lambda:None)
             pass
 
-        registry = di.RegistryBuilder().add_setup(configure_for_testing).add_module(Test_NoneModule).build()
+        registry = di.Registry().add_setup(configure_for_testing).add_module(Test_NoneModule).build()
         self.assertTrue(True)
         service = registry.get(Test_MyService)
         self.assertIsNone(service.get_db())

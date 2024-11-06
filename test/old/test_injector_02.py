@@ -46,7 +46,7 @@ class TestInjector2(unittest.TestCase):
         def configure_for_testing(binder):
             pass
 
-        self._registry = di.RegistryBuilder().add_setup(configure_for_testing).add_module(Test_TestModule).build()
+        self._registry = di.Registry().add_setup(configure_for_testing).add_module(Test_TestModule).build()
 
     def test_configuration_provided_by_module(self):
         """Test example"""

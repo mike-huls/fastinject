@@ -26,7 +26,7 @@ class RegLogging(XModule):
         return logging.getLogger("testing")
 
 
-class RegDatabase(XModule):
+class   RegDatabase(XModule):
     @singleton
     @provider
     def provide_config(self) -> MyDatabaseConfig:

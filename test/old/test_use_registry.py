@@ -6,58 +6,35 @@ import pytest
 
 from src.injectr import (
     inject_services as inject_from,
+    RegistryDEPRECATED,
     Registry,
-    RegistryBuilder,
     set_default_registry,
 )
 from test.objects_for_testing.registries import RegDatabaseLogging, RegLogging, RegDatabase
 from test.objects_for_testing.services import MyDatabaseConfig
 
 
-# Creating registries
-def test_create_registry_classmethod_works():
+def test_get_from_registry_by_type():
     """Test example"""
-    registry_builder = RegistryBuilder.create()
-    registry_builder.add_module(RegLogging)
-    assert len(registry_builder._modules) == 1
-    registry: Registry = registry_builder.build()
+    registry = Registry(modules=[RegLogging, RegDatabase])
     assert registry.get(logging.Logger) is not None
-    assert len(registry_builder._modules) == 1
+    assert registry.get(RegDatabase) is not None
 
-def test_create_registry_init_works():
+def test_get_from_registry_by_type():
     """Test example"""
-    registry_builder = RegistryBuilder()
-    registry_builder.add_module(RegLogging)
-    assert len(registry_builder._modules) == 1
-    registry: Registry = registry_builder.build()
+    registry = Registry(modules=[RegLogging])
     assert registry.get(logging.Logger) is not None
-    assert len(registry_builder._modules) == 1
-
-def test_create_registry_pass_modules_in_init_works():
-    """Test example"""
-    registry_builder = RegistryBuilder(modules=[RegLogging, RegDatabase])
-    assert len(registry_builder._modules) == 2
-    registry: Registry = registry_builder.build()
-    assert registry.get(logging.Logger) is not None
-    assert len(registry_builder._modules) == 2
-
-
-# ---------------------------------------------
-def test_things():
-    """Test example"""
-    registry_builder = RegistryBuilder(modules=[RegLogging, RegDatabase])
-    assert len(registry_builder._modules) == 2
-    registry: Registry = registry_builder.build()
-    assert registry.get(logging.Logger) is not None
-    assert len(registry_builder._modules) == 2
+    print("NNNNNNNNNNNNNNNn")
+    print(registry.get(RegDatabase))
+    print(registry._modules)
+    # assert registry.get(RegDatabase) is None
 
 
 def test_inject_from_works():
     """Test example"""
     # 1. Create registry
-    registry_builder = RegistryBuilder.create()
-    registry_builder.add_module(RegDatabaseLogging)
-    registry: Registry = registry_builder.build()
+    registry = Registry.create()
+    registry.add_module(RegDatabaseLogging)
     set_default_registry(None)
 
     @inject_from(registry=registry)

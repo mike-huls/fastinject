@@ -5,8 +5,8 @@ from typing import NewType, List
 from src.injectr import (
     inject_services as inject_from,
     set_default_registry,
+    RegistryDEPRECATED,
     Registry,
-    RegistryBuilder,
 )
 from test.objects_for_testing.registries import RegDatabaseLogging
 from test.objects_for_testing.services import MyDatabaseConfig
@@ -24,9 +24,9 @@ class TestInjectorInjectFromDefaultRegistry(unittest.TestCase):
     def test_inject_from_works(self):
         """Test example"""
         # 1. Create registry
-        registry_builder = RegistryBuilder.create()
+        registry_builder = Registry.create()
         registry_builder.add_module(RegDatabaseLogging)
-        registry: Registry = registry_builder.build()
+        registry: RegistryDEPRECATED = registry_builder.build()
         # we can manually set set_default_registry, but it should be populated by the .build() if it was None
         # set_default_registry(registry)
         registry = None

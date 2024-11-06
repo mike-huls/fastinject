@@ -3,22 +3,22 @@ import os
 from functools import wraps
 from typing import Callable, Optional, Union, get_origin, get_args
 
-from .default_registry import Registry
+from .default_registry import RegistryDEPRECATED
 
 _logger = logging.getLogger(name="injectr")
 _logger.setLevel(level=logging.WARNING)
 # "global" variable to allow us to set/get a default registry
 #     the getter/setter hide this from the application
 
-__default_registry: Optional[Registry] = None
+__default_registry: Optional[RegistryDEPRECATED] = None
 
 
-def set_default_registry(registry: Registry):
+def set_default_registry(registry: RegistryDEPRECATED):
     global __default_registry
     __default_registry = registry
 
 
-def get_default_registry() -> Registry:
+def get_default_registry() -> RegistryDEPRECATED:
     return __default_registry
 
 
@@ -55,7 +55,7 @@ def _get_actual_type(param):
     return param
 
 
-def inject_services(registry: Optional[Registry] = None, inject_missing_optional_as_none: bool = True) -> Callable:
+def inject_services(registry: Optional[RegistryDEPRECATED] = None, inject_missing_optional_as_none: bool = True) -> Callable:
     """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
 
     # maybe we should do this later
