@@ -1,9 +1,4 @@
-from injector import (
-    Injector as ParentInjector,
-    Binder as ParentBinder,
-    Provider,
-    Module as ParentModule,
-)
+from injector import Injector
 from injector import Scope, ScopeDecorator
 from typing import Any, Generic, TypeVar, Type, Union, Callable  # , Self,  Iterable
 from injector import T
@@ -11,7 +6,7 @@ import logging
 
 
 class Registry:
-    def __init__(self, injector: ParentInjector) -> None:
+    def __init__(self, injector: Injector) -> None:
         self._injector = injector
 
     def setLogLevel(self, level: int) -> None:

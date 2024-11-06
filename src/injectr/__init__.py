@@ -7,7 +7,7 @@ __last_publish_datetime__ = "2024-04-10 11:28:55"
 from .module import XModule
 from .helpers import *
 from .default_registry import Registry
-from .injection import RegistryBuilder, Binder
+from .injection import RegistryBuilder, XBinder
 from .decorators import inject_services, get_default_registry, set_default_registry
 
 # from injector import Module, provider, Injector, inject
