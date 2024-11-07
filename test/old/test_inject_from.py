@@ -1,67 +1,35 @@
 import logging
 import time
-import unittest
-from typing import List
+from typing import List, Optional
 
 import pytest
 
 from src.injectr import (
-    inject_services as inject_from,
+    inject_from,
     Registry,
-    set_default_registry,
 )
-from test.objects_for_testing.modules import ModuleDatabaseLogging, ModuleLogging, ModuleDatabase, ModuleTimestamper, ModuleTimestamperWeirdImport
-from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
+from test.objects_for_testing import services
+from test.objects_for_testing.modules import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
+from test.objects_for_testing.services import MyDatabaseConfig, TimeStampLogger
 
 
-def test_get_from_registry():
-    """Test example"""
-    registry = Registry(modules=[ModuleLogging])
-    assert registry.get(logging.Logger) is not None
-    assert registry.get(ModuleTimestamper) is None
+class NonRegisteredClass:
+    pass
 
-def test_can_get_from_registry_folder_import():
-    """The service is imported like folder.Classname in the Module """
-    registry = Registry(modules=[ModuleTimestamperWeirdImport])
-    assert registry.get(ModuleTimestamperWeirdImport) is not  None
 
-def test_get_from_registry_autobind():
-    """ Even though ModuleTimestamp is not registered on the registry, when we auto_bind=True, injector will resolve the dependency.
-    This is becauase it searches the type in all functions decorated with @provider """
-    # Create registry
-    registry = Registry(modules=[ModuleDatabase], auto_bind=True)
-
-    # Can find both modules even though
-    assert registry.get(MyDatabaseConfig) is not None
-    assert registry.get(TimeStamp) is not None
-
-    # Assert that ts is a full TimeStamp with all methods etc.
-    ts:TimeStamp = registry.get(TimeStamp)
-    assert ts is not None               # should be found
-    assert 'time_passed' in dir(ts)     # has 'time_passed' function
-    assert isinstance(ts.time_passed(), float)
-    time.sleep(0.001)
-    assert ts.time_passed() > 0.0
-
-# ------------------------------------------------------------------------------------------------------
-def test_inject_from_works():
-    """Test example"""
+def test_can_inject_from():
     # 1. Create registry
     registry = Registry(modules=[ModuleLogging, ModuleDatabase])
-    set_default_registry(None)
 
+    # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
     def inject_logger_in_fn(logger: logging.Logger):
         assert logger is not None
-
-    inject_logger_in_fn()
 
     @inject_from(registry=registry)
     def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
-
-    inject_dbconfig_in_fn()
 
     @inject_from(registry=registry)
     def inject_both(dbcon: MyDatabaseConfig, logger: logging.Logger):
@@ -69,16 +37,140 @@ def test_inject_from_works():
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert logger is not None
 
+    # 3. Call decorated functions
+    inject_logger_in_fn()
+    inject_dbconfig_in_fn()
     inject_both()
 
-    # Cannot get type form container that isn't registered; throws
+def test_raises_on_injecting_unregisterd_required_object():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def inject_logger_in_fn(my_inst: NonRegisteredClass):
+        ...
+
+    # Should fail because it cannot inject requried SomeClass type
+    with pytest.raises(TypeError):
+        inject_logger_in_fn()
+
+
+def test_returns_none_on_injecting_unregisterd_optional_object():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def inject_logger_in_fn(my_inst: Optional[NonRegisteredClass]):
+        assert my_inst is None
+
+    # Should fail because it cannot inject requried SomeClass type
+    inject_logger_in_fn()
+
+def test_raises_on_injecting_unregisterd_optional_object_when_not_inject_none():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry, inject_missing_optional_as_none=False)
+    def inject_logger_in_fn(my_inst: Optional[NonRegisteredClass]):
+        assert my_inst is None
+
+    # Should fail because it cannot inject requried SomeClass type
+    with pytest.raises(TypeError):
+        inject_logger_in_fn()
+
+def test_can_inject_from_nested_dependencies():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleNestedDependenciesSimple])
+
+    @inject_from(registry=registry)
+    def inject_logger_in_fn(ts: services.TimeStamp, tslogger: TimeStampLogger):
+        assert ts is not None
+        assert tslogger is not None
+        print(tslogger.timestamp.init_time)
+
+    # 3. Call decorated functions
+    inject_logger_in_fn()
+    time.sleep(0.1)
+    inject_logger_in_fn()
+    time.sleep(0.2)
+
+
+
+
+def test_can_inject_from_with_optional_dependency():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def inject_logger_in_fn(logger: Optional[logging.Logger]):
+        assert logger is not None
+
+    @inject_from(registry=registry)
+    def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
+        assert dbcon is not None
+        assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
+
+    @inject_from(registry=registry)
+    def inject_both(dbcon: MyDatabaseConfig, logger: logging.Logger):
+        assert dbcon is not None
+        assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
+        assert logger is not None
+
+    # 3. Call decorated functions
+    inject_logger_in_fn()
+    inject_dbconfig_in_fn()
+    inject_both()
+
+def test_can_inject_from_with_additional_args():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def inject_logger_in_fn(logger: logging.Logger, a:int, b:int=1, c:Optional[int]=None):
+        assert logger is not None
+        assert isinstance(a, int)
+        assert isinstance(b, int)
+        assert isinstance(c, int) or c is None
+
+
+    # 3. Call decorated functions
+    inject_logger_in_fn(a=5, b=4, c=4)
+    inject_logger_in_fn(a=5, b=4, c=None)
+    inject_logger_in_fn(a=5)
+    with pytest.raises(TypeError):
+        # a is required; shoudle be provided
+        inject_logger_in_fn()
+        inject_logger_in_fn(b=5)
+        inject_logger_in_fn(c=5)
+
+def test_raises_typeerror_on_nonregistered_type():
+    """ Cannot get type form container that isn't registered; throws """
+
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
+
     @inject_from(registry=registry)
     def inject_non_existent(logger: List):
         assert logger is None
 
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         inject_non_existent()
 
+def test_can_inject_in_class():
+    # 1. Create registry
+    registry = Registry(modules=[ModuleLogging, ModuleDatabase])
 
-# if __name__ == '__main__':
-#     unittest.main()
+    # 2. Decorate class with registry to inject from
+    class MyClass:
+        @inject_from(registry=registry)
+        def __init__(self, logger: logging.Logger):
+            self.logger = logger
+            assert logger is not None
+
+    # 3. Create instance and call decorated function
+    my_class = MyClass()

@@ -8,7 +8,7 @@ from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 # ConnectionString = NewType("ConnectionString", str)
 
 
-class RegDatabaseLogging(Module):
+class ModuleDatabaseLogging(Module):
     @singleton
     @provider
     def provide_config(self) -> MyDatabaseConfig:
@@ -20,28 +20,40 @@ class RegDatabaseLogging(Module):
         return logging.getLogger("testing")
 
 
-class RegLogging(Module):
+class ModuleLogging(Module):
     @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
 
 
-class RegDatabase(Module):
+class ModuleDatabase(Module):
     @singleton
     @provider
     def provide_config(self) -> MyDatabaseConfig:
         return MyDatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
-class RegTimestamper(Module):
-    @singleton
+class ModuleTimestamper(Module):
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
 
 
-class RegTimestamperWeirdImport(Module):
+class ModuleTimestamperWeirdImport(Module):
     @singleton
     @provider
     def provide_timestamper(self) -> services.TimeStamp:
         return services.TimeStamp()
+
+
+class ModuleNestedDependenciesSimple(Module):
+
+    @singleton
+    @provider
+    def provide_timestamper(self) -> services.TimeStamp:
+        return services.TimeStamp()
+
+    @provider
+    def provide_timestamplogger(self) -> services.TimeStampLogger:
+        return services.TimeStampLogger(timestamp=self.provide_timestamper())
+
