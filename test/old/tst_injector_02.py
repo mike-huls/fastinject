@@ -22,7 +22,12 @@ class Test_MyDatabaseConfig:
         return self._connection_string
 
 
-class Test_TestModule(di.XModule):
+class Test_TestModule(di.Module):
+    @di.singleton
+    @di.provider
+    def provide_config(self) -> Test_MyDatabaseConfig:
+        return Test_MyDatabaseConfig("file:memdb1?mode=memory&cache=shared2")
+
     @di.singleton
     @di.provider
     def provide_str(self, configuration: Test_MyDatabaseConfig) -> ConnectionString:
@@ -36,29 +41,26 @@ class Test_MyService:
         pass
 
 
-class TestInjector(unittest.TestCase):
+class TestInjector2(unittest.TestCase):
     def setUp(self) -> None:
         def configure_for_testing(binder):
-            # configuration = di.MyDatabaseConfig(":memory:")
-            configuration = Test_MyDatabaseConfig("file:memdb1?mode=memory&cache=shared")
-            binder.bind(Test_MyDatabaseConfig, to=configuration, scope=di.singleton)
+            pass
 
         self._registry = di.Registry().add_setup(configure_for_testing).add_module(Test_TestModule).build()
 
-    def test_configuration_provided_by_function(self):
+    def test_configuration_provided_by_module(self):
         """Test example"""
         self.assertTrue(True)
         service = self._registry.get(Test_MyService)
-        self.assertEqual(service.cs, "file:memdb1?mode=memory&cache=shared")
+        self.assertEqual(service.cs, "file:memdb1?mode=memory&cache=shared2")
 
+        # sc = self._injector.get(di.MyServiceConfig)
+        # self.assertEqual(sc.get_message(), "message 01")
+        # # MyService doesn't need to be registered up front
+        # s = self._injector.get(di.MyService)
+        # self.assertEqual(s.get_message(), "message 01")
 
-# sc = self._injector.get(di.MyServiceConfig)
-# self.assertEqual(sc.get_message(), "message 01")
-# # MyService doesn't need to be registered up front
-# s = self._injector.get(di.MyService)
-# self.assertEqual(s.get_message(), "message 01")
-
-# self.assertIsNotNone(s.get_db())
+        # self.assertIsNotNone(s.get_db())
 
 
 if __name__ == "__main__":

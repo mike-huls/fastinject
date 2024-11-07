@@ -29,14 +29,14 @@ class TMyDatabaseConfig:
         return self._connection_string
 
 
-class Test_TestModule(di.XModule):
+class Test_TestModule(di.Module):
     @di.singleton
     @di.provider
     def provide_config(self) -> TMyDatabaseConfig:
         return TMyDatabaseConfig("file:memdb1?mode=memory&cache=shared3")
 
 
-class Test_NoneModule(di.XModule):
+class Test_NoneModule(di.Module):
     @di.singleton
     @di.provider
     def provide_config(
