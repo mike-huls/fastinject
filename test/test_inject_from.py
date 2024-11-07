@@ -6,10 +6,11 @@ import pytest
 
 from src.injectr import (
     inject_from,
-    Registry,
+    Registry, logger,
 )
 from test.objects_for_testing import services
 from test.objects_for_testing.modules import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
+from test.objects_for_testing.registries import DummyRegistry
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStampLogger
 
 
@@ -18,6 +19,7 @@ class NonRegisteredClass:
 
 
 def test_can_inject_from():
+
     # 1. Create registry
     registry = Registry(modules=[ModuleLogging, ModuleDatabase])
 
@@ -41,6 +43,33 @@ def test_can_inject_from():
     inject_logger_in_fn()
     inject_dbconfig_in_fn()
     inject_both()
+
+def test_catch_error_in_getting_service_from_registry():
+    # 1. Create registry
+    registry = DummyRegistry()
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def injected_fn(dbcon: MyDatabaseConfig, logger: logging.Logger):
+        assert dbcon is not None
+        assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
+        assert logger is not None
+
+    # 3. Call decorated functions
+    with pytest.raises(ValueError):
+        injected_fn()
+
+def test_inject_none_if_error_in_getting_optional_service_from_registry():
+    # 1. Create registry
+    registry = DummyRegistry()
+
+    # 2. Decorate functions with registry to inject from
+    @inject_from(registry=registry)
+    def injected_fn(dbcon: Optional[MyDatabaseConfig]=None):
+        assert dbcon is None
+
+    # 3. Call decorated functions
+    injected_fn()
 
 def test_raises_on_injecting_unregisterd_required_object():
     # 1. Create registry

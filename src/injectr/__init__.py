@@ -2,8 +2,7 @@
 
 from injector import Module
 # from .helpers import *
-from .default_registry import RegistryDEPRECATED
-from .injection import Registry, set_default_registry, get_default_registry
+from .registry import Registry, set_default_registry, get_default_registry
 from .decorators import inject_from
 from .loggers import logger
 # from injector import Module, provider, Injector, inject

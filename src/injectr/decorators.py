@@ -1,18 +1,15 @@
-import inspect, logging
+import inspect
 from functools import wraps
 from typing import Callable, Optional, Type
 
 from . import Registry, get_default_registry
-from .type_helpers import is_optional_type, get_type_that_optional_wraps
 from .loggers import logger
+from .type_helpers import is_optional_type, get_type_that_optional_wraps
 
 
 def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_none: bool = True) -> Callable:
     """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
 
-    # maybe we should do this later
-    # if registry is None:
-    #    registry = get_default_registry()
     def decorator(func: Callable) -> Callable:
         # Get decorated function's signature
         fn_signature = inspect.signature(func)
@@ -31,7 +28,7 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                     has_value: bool = param_name in bound_arguments.arguments and bound_arguments.arguments[param_name] is not None
                     value_is_none = bound_arguments.arguments[param_name] is None
                     if has_value or (is_optional_param and value_is_none):
-                        print(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
+                        logger.debug(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
                         continue
 
 
@@ -39,25 +36,24 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                 type_to_resolve:Type = get_type_that_optional_wraps(param_val.annotation)
 
                 found_service = None
-                logger.debug(f"Attempting to resolve parameter {param_name}:{param_val.annotation}. Type to resolve {type_to_resolve}")
+                logger.debug(f"Resolving parameter '{param_name}':{param_val.annotation} (type={type_to_resolve})")
                 try:
                     found_service = registry.get(type_to_resolve, None)
+                    logger.debug(f"found service: {found_service}")
                 except Exception as e:
-                    if param_name not in bound_arguments.arguments and not is_optional_param:
-                        # no default value (None) was provided
-                        # this could indicate a bug in the code so we log a warning
-                        logger.warning(f"Failed to resolve/create instance of type {param_name}:{type_to_resolve}. Was this an optional type?")
-                        # logger.exception(f"Failed to resolve/create instance of type {param_name}:{type_to_resolve}")
-                        continue
-                    found_service = None
+                    caller_provided_value:bool = param_name in bound_arguments.arguments
+                    if not caller_provided_value and not is_optional_param:
+                        raise ValueError(f"Cannot inject value for required parameter '{param_name}'. Error: {e}")
+                    # eigher value for param is provided by user or param is optional; keep found_service=None
 
 
+                # Actually inject a value, albeit None or the found service
                 if found_service is not None:
-                    logger.debug(f"Injecting resolved value for the parameter {param_name}")
+                    logger.debug(f"Injecting resolved value for the parameter '{param_name}'")
                     bound_arguments.arguments[param_name] = found_service
                 elif inject_missing_optional_as_none and is_optional_param:
                     # inject None for optional values if it can't be resolved
-                    logger.debug(f"Injecting NONE for the optional parameter {param_name}")
+                    logger.debug(f"Injecting NONE for the optional parameter '{param_name}'")
                     bound_arguments.arguments[param_name] = None
 
             return func(*bound_arguments.args, **bound_arguments.kwargs)
@@ -69,21 +65,17 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
 
 def inject(inject_missing_optional_as_none: bool = True) -> Callable:
     """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
-
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             target_registry = get_default_registry()
             if target_registry is None:
-                logger.warning("No registries configured")
                 raise ValueError("No registries configured")
-            print(f"{target_registry=}")
+
             inject_func = inject_from(
                 registry=target_registry,
                 inject_missing_optional_as_none=inject_missing_optional_as_none
             )(func)
             return inject_func(*args, **kwargs)
-
         return wrapper
-
     return decorator

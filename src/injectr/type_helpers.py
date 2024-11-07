@@ -11,7 +11,6 @@ def is_optional_type(param_type: Type) -> bool:
 
 def get_type_that_optional_wraps(param_type: Type) -> Type:
     """Extract the actual type from an Optional type."""
-    print(f"\nactual type with {param_type}")
     if is_optional_type(param_type):
         return next(arg for arg in get_args(param_type) if arg is not type(None))
     return param_type

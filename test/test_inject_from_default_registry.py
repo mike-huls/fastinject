@@ -4,7 +4,7 @@ from typing import NewType, Optional
 
 import pytest
 
-from src.injectr import inject_from, RegistryDEPRECATED, Registry, set_default_registry, get_default_registry
+from src.injectr import inject_from, Registry, set_default_registry, get_default_registry
 from src.injectr.decorators import inject
 from test.objects_for_testing import services
 from test.objects_for_testing.modules import ModuleDatabaseLogging, ModuleTimestamper
