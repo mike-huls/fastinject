@@ -3,12 +3,12 @@ import unittest
 from typing import NewType, Optional
 
 from src.injectr import (
-    inject_services as inject_from,
+    inject_from,
     set_default_registry,
+    RegistryDEPRECATED,
     Registry,
-    RegistryBuilder,
 )
-from test.objects_for_testing.registries import RegDatabaseLogging, RegDatabase
+from test.objects_for_testing.modules import ModuleDatabaseLogging, ModuleDatabase
 
 ConnectionString = NewType("ConnectionString", str)
 
@@ -25,9 +25,9 @@ class TestObject:
 def test_inject_from_works():
     """Test example"""
     # 1. Create registry
-    registry_builder = RegistryBuilder.create()
-    registry_builder.add_module(RegDatabase)
-    registry: Registry = registry_builder.build()
+    registry_builder = Registry()
+    registry_builder.add_module(ModuleDatabase)
+    registry: RegistryDEPRECATED = registry_builder.build()
     set_default_registry(registry)
     # @inject_from()
     instance = TestObject()

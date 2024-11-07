@@ -1,61 +1,13 @@
 import inspect, logging
-import os
 from functools import wraps
-from typing import Callable, Optional, Union, get_origin, get_args
+from typing import Callable, Optional, Type
 
-from .default_registry import Registry
-
-_logger = logging.getLogger(name="injectr")
-_logger.setLevel(level=logging.WARNING)
-# "global" variable to allow us to set/get a default registry
-#     the getter/setter hide this from the application
-
-__default_registry: Optional[Registry] = None
+from . import Registry, get_default_registry
+from .type_helpers import is_optional_type, get_type_that_optional_wraps
+from .loggers import logger
 
 
-def set_default_registry(registry: Registry):
-    global __default_registry
-    __default_registry = registry
-
-
-def get_default_registry() -> Registry:
-    return __default_registry
-
-
-def _get_logger() -> logging.Logger:
-    return logging.getLogger(__file__)
-
-
-def _is_optional_type(param):
-    # if "Optional" in str(param):
-    #    pass
-    origin = get_origin(param)
-    if origin is Union:
-        args = get_args(param)
-        if type(None) in args:  # Check if NoneType is part of the Union
-            non_none_args = [arg for arg in args if arg is not type(None)]
-            if len(non_none_args) == 1:
-                return True
-    if origin is Optional:
-        return True
-    return False
-
-
-def _get_actual_type(param):
-    # if "Optional" in str(param):
-    #    pass
-    if get_origin(param) is Union:
-        args = get_args(param)
-        if type(None) in args:  # Check if NoneType is part of the Union
-            non_none_args = [arg for arg in args if arg is not type(None)]
-            if len(non_none_args) == 1:
-                return non_none_args[0]
-    if get_origin(param) is Optional:
-        return param.__args__[0]
-    return param
-
-
-def inject_services(registry: Optional[Registry] = None, inject_missing_optional_as_none: bool = True) -> Callable:
+def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_none: bool = True) -> Callable:
     """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
 
     # maybe we should do this later
@@ -67,50 +19,70 @@ def inject_services(registry: Optional[Registry] = None, inject_missing_optional
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            target_registry = registry
-            if target_registry is None:
-                target_registry = get_default_registry()
             # Get decorated function's bound_arguments
             bound_arguments = fn_signature.bind_partial(*args, **kwargs)
             bound_arguments.apply_defaults()
 
-            # Check which params miss arguments for us to look up in the registry
+            # Skip params that already have an argument
+            # Check which params misses arguments for us to look up in the registry;
             for param_name, param_val in fn_signature.parameters.items():
+                is_optional_param: bool = is_optional_type(param_type=param_val.annotation)
                 if param_name in bound_arguments.arguments:
-                    # Skip if the argument is already provided
-                    # For optional parameters still attempt to resovle them if the value is None
-                    if not _is_optional_type(param_val.annotation) or bound_arguments.arguments[param_name] is not None:
-                        _logger.debug(f" Skipping parameter {param_name} because it got a value ")
+                    has_value: bool = param_name in bound_arguments.arguments and bound_arguments.arguments[param_name] is not None
+                    value_is_none = bound_arguments.arguments[param_name] is None
+                    if has_value or (is_optional_param and value_is_none):
+                        print(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
                         continue
+
 
                 # Attempt to retrieve from registry
-                type_to_resolve = _get_actual_type(param_val.annotation)
-                from_registry = None
-                _logger.debug(
-                    f"Attempting to resolve parameter {param_name}:{param_val.annotation}. Type to resolve {type_to_resolve}"
-                )
+                type_to_resolve:Type = get_type_that_optional_wraps(param_val.annotation)
+
+                found_service = None
+                logger.debug(f"Attempting to resolve parameter {param_name}:{param_val.annotation}. Type to resolve {type_to_resolve}")
                 try:
-                    from_registry = target_registry.get(type_to_resolve, None)
-                except:
-                    if param_name not in bound_arguments.arguments and not _is_optional_type(param_val.annotation):
+                    found_service = registry.get(type_to_resolve, None)
+                except Exception as e:
+                    if param_name not in bound_arguments.arguments and not is_optional_param:
                         # no default value (None) was provided
                         # this could indicate a bug in the code so we log a warning
-                        _logger.warning(
-                            f"Failed to resolve/create instance of type {param_name}:{type_to_resolve}. Was this an optional type?"
-                        )
+                        logger.warning(f"Failed to resolve/create instance of type {param_name}:{type_to_resolve}. Was this an optional type?")
                         # logger.exception(f"Failed to resolve/create instance of type {param_name}:{type_to_resolve}")
                         continue
-                    from_registry = None
+                    found_service = None
 
-                if from_registry is not None:
-                    _logger.debug(f"Injecting resolved value for the parameter {param_name}")
-                    bound_arguments.arguments[param_name] = from_registry
-                elif inject_missing_optional_as_none and _is_optional_type(param_val.annotation):
+
+                if found_service is not None:
+                    logger.debug(f"Injecting resolved value for the parameter {param_name}")
+                    bound_arguments.arguments[param_name] = found_service
+                elif inject_missing_optional_as_none and is_optional_param:
                     # inject None for optional values if it can't be resolved
-                    _logger.debug(f"Injecting NONE for the optional parameter {param_name}")
+                    logger.debug(f"Injecting NONE for the optional parameter {param_name}")
                     bound_arguments.arguments[param_name] = None
 
             return func(*bound_arguments.args, **bound_arguments.kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def inject(inject_missing_optional_as_none: bool = True) -> Callable:
+    """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
+
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            target_registry = get_default_registry()
+            if target_registry is None:
+                logger.warning("No registries configured")
+                raise ValueError("No registries configured")
+            print(f"{target_registry=}")
+            inject_func = inject_from(
+                registry=target_registry,
+                inject_missing_optional_as_none=inject_missing_optional_as_none
+            )(func)
+            return inject_func(*args, **kwargs)
 
         return wrapper
 

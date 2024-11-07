@@ -5,7 +5,7 @@ from injector import T
 import logging
 
 
-class Registry:
+class RegistryDEPRECATED:
     def __init__(self, injector: Injector) -> None:
         self._injector = injector
 
