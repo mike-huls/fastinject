@@ -1,6 +1,7 @@
 import logging
 
-from src.injectr import singleton, provider, Module
+from src.injectr import singleton, provider
+from src.injectr.service_config import ServiceConfig
 from test.objects_for_testing import services
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 
@@ -8,7 +9,7 @@ from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 # ConnectionString = NewType("ConnectionString", str)
 
 
-class ModuleDatabaseLogging(Module):
+class ModuleDatabaseLogging(ServiceConfig):
     @singleton
     @provider
     def provide_config(self) -> MyDatabaseConfig:
@@ -20,34 +21,34 @@ class ModuleDatabaseLogging(Module):
         return logging.getLogger("testing")
 
 
-class ModuleLogging(Module):
+class ModuleLogging(ServiceConfig):
     @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
 
 
-class ModuleDatabase(Module):
+class ModuleDatabase(ServiceConfig):
     @singleton
     @provider
     def provide_config(self) -> MyDatabaseConfig:
         return MyDatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
-class ModuleTimestamper(Module):
+
+class ModuleTimestamper(ServiceConfig):
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
 
 
-class ModuleTimestamperWeirdImport(Module):
+class ModuleTimestamperWeirdImport(ServiceConfig):
     @singleton
     @provider
     def provide_timestamper(self) -> services.TimeStamp:
         return services.TimeStamp()
 
 
-class ModuleNestedDependenciesSimple(Module):
-
+class ModuleNestedDependenciesSimple(ServiceConfig):
     @singleton
     @provider
     def provide_timestamper(self) -> services.TimeStamp:
@@ -56,4 +57,3 @@ class ModuleNestedDependenciesSimple(Module):
     @provider
     def provide_timestamplogger(self) -> services.TimeStampLogger:
         return services.TimeStampLogger(timestamp=self.provide_timestamper())
-

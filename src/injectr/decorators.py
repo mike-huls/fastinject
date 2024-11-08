@@ -2,7 +2,8 @@ import inspect
 from functools import wraps
 from typing import Callable, Optional, Type
 
-from .registry import Registry, get_default_registry, Module
+from .registry import Registry, get_default_registry
+from .service_config import ServiceConfig
 from injector import Binder, Scope, noscope
 
 from .loggers import logger
@@ -27,15 +28,18 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
             for param_name, param_val in fn_signature.parameters.items():
                 is_optional_param: bool = is_optional_type(param_type=param_val.annotation)
                 if param_name in bound_arguments.arguments:
-                    has_value: bool = param_name in bound_arguments.arguments and bound_arguments.arguments[param_name] is not None
+                    has_value: bool = (
+                        param_name in bound_arguments.arguments and bound_arguments.arguments[param_name] is not None
+                    )
                     value_is_none = bound_arguments.arguments[param_name] is None
                     if has_value or (is_optional_param and value_is_none):
-                        print(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
+                        print(
+                            f"Skipping injection for '{param_name}' - already provided or optional with default None."
+                        )
                         continue
 
-
                 # Attempt to retrieve from registry
-                type_to_resolve:Type = get_type_that_optional_wraps(param_val.annotation)
+                type_to_resolve: Type = get_type_that_optional_wraps(param_val.annotation)
 
                 found_service = None
                 logger.debug(f"Resolving parameter '{param_name}':{param_val.annotation} (type={type_to_resolve})")
@@ -43,11 +47,10 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                     found_service = registry.get(type_to_resolve, None)
                     logger.debug(f"found service: {found_service}")
                 except Exception as e:
-                    caller_provided_value:bool = param_name in bound_arguments.arguments
+                    caller_provided_value: bool = param_name in bound_arguments.arguments
                     if not caller_provided_value and not is_optional_param:
                         raise ValueError(f"Cannot inject value for required parameter '{param_name}'. Error: {e}")
                     # eigher value for param is provided by user or param is optional; keep found_service=None
-
 
                 # Actually inject a value, albeit None or the found service
                 if found_service is not None:
@@ -76,8 +79,7 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
                 raise ValueError("No registries configured")
 
             inject_func = inject_from(
-                registry=target_registry,
-                inject_missing_optional_as_none=inject_missing_optional_as_none
+                registry=target_registry, inject_missing_optional_as_none=inject_missing_optional_as_none
             )(func)
             return inject_func(*args, **kwargs)
 
@@ -86,29 +88,30 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
     return decorator
 
 
-def injectable(scope: Optional[Scope]=noscope):
+def injectable(scope: Optional[Scope] = None):
     def decorator(original_class: Type):
-
         registry = get_default_registry() or Registry()
 
-        if issubclass(original_class, Module):
-            registry.add_module(module=original_class)
+        if issubclass(original_class, ServiceConfig):
+            registry.add_service_config(service_config=original_class)
             return original_class
 
-        def configure_for_testing(binder: Binder):
-            """ Puts a service in a registry without the decorators """
-            binder.bind(original_class, to=original_class(), scope=scope)
-        registry.add_setup_function(configure_for_testing)
+        # def configure_for_testing(binder: Binder):
+        #     """ Puts a service in a registry without the decorators """
+        #     binder.bind(original_class, to=original_class, scope=scope)
+        # registry.add_setup_function(configure_for_testing)
+        registry.add_service(service=original_class, scope=scope)
 
         return original_class
+
     return decorator
 
-def injectables(original_class: Type):
 
-    registry = get_default_registry() or Registry()
-
-    if not issubclass(original_class, Module):
-        raise ValueError(f"{original_class} does not inherit from Module. Must inherit from Module to be injectable.")
-    registry.add_module(module=original_class)
-    return original_class
-
+# def injectables(original_class: Type):
+#
+#     registry = get_default_registry() or Registry()
+#
+#     if not issubclass(original_class, ServiceConfig):
+#         raise ValueError(f"{original_class} does not inherit from Module. Must inherit from Module to be injectable.")
+#     registry.add_service_config(service_config=original_class)
+#     return original_class

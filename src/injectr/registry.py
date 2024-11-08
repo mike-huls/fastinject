@@ -2,9 +2,9 @@ import logging
 from typing import Any, Type, Union, Callable, List, Optional  # , Self,  Iterable
 
 from injector import Injector, Binder
-from injector import Module
 from injector import Scope, ScopeDecorator
 from injector import T
+from .service_config import ServiceConfig
 
 # _InstallableModuleType = Union[Callable[['XBinder'], None], 'Module', Type['Module']]
 _InstallableModuleType = Union["Module", Type["Module"]]
@@ -23,36 +23,45 @@ _InstallableModuleType = Union["Module", Type["Module"]]
 #         self._parent.bind(interface, to, scope)
 
 
-
 class Registry:
-    """ _setup_functions contain functions that let us imperatively register a service within a dependency injection Registry.
+    """_setup_functions contain functions that let us imperatively register a service within a dependency injection Registry.
     It dynamically binds a configuration object to the registry without using decorators, allowing for on-the-fly service binding
     """
-    _auto_bind:bool
-    _modules: List[Module]
+
+    _auto_bind: bool
+    _modules: List[ServiceConfig]
     _setup_functions: List[Callable[[Binder], None]]
 
-    def __init__(self, modules: Optional[List[_InstallableModuleType]]=None, auto_bind:bool=False) -> None:
+    def __init__(
+        self,
+        service_configs: Optional[List[_InstallableModuleType]] = None,
+        services: Optional[List[_InstallableModuleType]] = None,
+        auto_bind: bool = False,
+    ) -> None:
         """
         auto_bind: bool : if True; will automatically resolve types that it can construct. Looks in all functions decorated with @provider.
 
         """
         self._auto_bind = auto_bind
-        self._modules: List[Module] = []
+        self._modules: List[ServiceConfig] = []
         self._setup_functions: List[Callable[[Binder], None]] = []
-        for module in modules or []:
-            self.add_module(module=module)
-        self.build()
+        for service_config in service_configs or []:
+            self.add_service_config(service_config=service_config)
+        for service in services or []:
+            self.add_service(service=service)
+        self.__build()
 
+    def add_service(self, service: Type, scope: Optional[Scope] = None) -> "Registry":
+        def _setup_function(binder: Binder):
+            binder.bind(service, to=service, scope=scope)
 
-    def add_module(self, module: _InstallableModuleType) -> "Registry":
-        self._modules.append(module)
-        self.build()
+        self._setup_functions.append(_setup_function)
+        self.__build()
         return self
 
-    def add_setup_function(self, setup_function: Callable[[Binder], None]) -> "Registry":
-        self._setup_functions.append(setup_function)
-        self.build()
+    def add_service_config(self, service_config: _InstallableModuleType) -> "Registry":
+        self._modules.append(service_config)
+        self.__build()
         return self
 
     # def bind(
@@ -63,10 +72,8 @@ class Registry:
     # ) -> "T":
     #     return self.add_setup(lambda binder: binder.bind(interface, to, scope))
 
-    def build(self) -> "Registry":
-
+    def __build(self) -> "Registry":
         def configure(binder: Binder):
-            # dnx_bind = Binder(binder)
             for fn in self._setup_functions:
                 fn(binder)
 
@@ -99,8 +106,8 @@ class Registry:
         self,
         callable: Callable[..., T],
         self_: Any = None,
-        args: Optional[Any]=None,
-        kwargs: Optional[Any]=None,
+        args: Optional[Any] = None,
+        kwargs: Optional[Any] = None,
     ) -> T:
         """
         Calls the function and injects the parameters if the function is decorated with @inject or any of the arguments are wrapped with Inject[..]
@@ -109,7 +116,9 @@ class Registry:
         kwargs = kwargs if kwargs is not None else {}
         return self._injector.call_with_injection(callable, self_, args, kwargs)
 
+
 __default_registry: Optional[Registry] = None
+
 
 def set_default_registry(registry: Registry):
     global __default_registry
@@ -117,4 +126,6 @@ def set_default_registry(registry: Registry):
 
 
 def get_default_registry() -> Registry:
+    if __default_registry is None:
+        set_default_registry(Registry())
     return __default_registry

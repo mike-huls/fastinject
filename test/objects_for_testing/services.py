@@ -12,14 +12,16 @@ class MyDatabaseConfig:
 
 class TimeStamp:
     init_time: float
+
     def __init__(self) -> None:
         self.init_time = time.time()
 
     def time_passed(self) -> float:
         return time.time() - self.init_time
 
+
 class TimeStampLogger:
-    timestamp:TimeStamp
+    timestamp: TimeStamp
 
     def __init__(self, timestamp: TimeStamp) -> None:
         self.timestamp = timestamp

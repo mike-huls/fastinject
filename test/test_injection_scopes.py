@@ -4,7 +4,7 @@ from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 
 
 def test_singleton_returns_same_object():
-    registry = Registry(modules=[ModuleDatabase], auto_bind=True)
+    registry = Registry(service_configs=[ModuleDatabase], auto_bind=True)
 
     # Can find both modules even though
     assert registry.get(MyDatabaseConfig) is not None
@@ -13,8 +13,9 @@ def test_singleton_returns_same_object():
     id2 = id(registry.get(MyDatabaseConfig))
     assert id1 == id2
 
+
 def test_non_singleton_returns_different_object():
-    registry = Registry(modules=[ModuleTimestamper], auto_bind=True)
+    registry = Registry(service_configs=[ModuleTimestamper], auto_bind=True)
 
     # Can find both modules even though
     assert registry.get(TimeStamp) is not None

@@ -5,9 +5,8 @@ from test.objects_for_testing import modules
 
 
 def test_can_call_with_injection():
-
     # 1. Create registry
-    registry = Registry(modules=[modules.ModuleLogging, modules.ModuleDatabase])
+    registry = Registry(service_configs=[modules.ModuleLogging, modules.ModuleDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -18,17 +17,17 @@ def test_can_call_with_injection():
 
     registry.call_with_injection(callable=inject_both)
 
-def test_can_call_with_injection_additional_args():
 
+def test_can_call_with_injection_additional_args():
     # 1. Create registry
-    registry = Registry(modules=[modules.ModuleLogging, modules.ModuleDatabase])
+    registry = Registry(service_configs=[modules.ModuleLogging, modules.ModuleDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def inject_both(dbcon: modules.MyDatabaseConfig, logger: logging.Logger, name:str):
+    def inject_both(dbcon: modules.MyDatabaseConfig, logger: logging.Logger, name: str):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert logger is not None
         assert name == "some_name"
 
-    registry.call_with_injection(callable=inject_both, kwargs={'name': 'some_name'})
+    registry.call_with_injection(callable=inject_both, kwargs={"name": "some_name"})
