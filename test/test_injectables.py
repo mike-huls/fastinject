@@ -52,6 +52,7 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
     injected_fn()
 
 
+@pytest.fixture(scope="function")
 def test_raises_on_injecting_unregisterd_required_object():
     # 2. Decorate functions with registry to inject from
     @inject()
@@ -130,6 +131,7 @@ def test_can_inject_from_with_additional_args():
         inject_logger_in_fn(c=5)
 
 
+@pytest.fixture(scope="function")
 def test_raises_typeerror_on_nonregistered_type_with_injectable():
     """Cannot get type form container that isn't registered; throws"""
 

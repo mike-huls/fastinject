@@ -182,6 +182,7 @@ def test_can_inject_from_with_additional_args():
         inject_logger_in_fn(c=5)
 
 
+@pytest.fixture(scope="function")
 def test_raises_typeerror_on_nonregistered_type():
     """Cannot get type form container that isn't registered; throws"""
 
