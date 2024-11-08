@@ -28,7 +28,7 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                     has_value: bool = param_name in bound_arguments.arguments and bound_arguments.arguments[param_name] is not None
                     value_is_none = bound_arguments.arguments[param_name] is None
                     if has_value or (is_optional_param and value_is_none):
-                        logger.debug(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
+                        print(f"Skipping injection for '{param_name}' - already provided or optional with default None.")
                         continue
 
 
@@ -65,6 +65,7 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
 
 def inject(inject_missing_optional_as_none: bool = True) -> Callable:
     """Decorator that inspects the decorated function and injects instances from the provided registry if available."""
+
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -77,5 +78,7 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
                 inject_missing_optional_as_none=inject_missing_optional_as_none
             )(func)
             return inject_func(*args, **kwargs)
+
         return wrapper
+
     return decorator

@@ -1,14 +1,9 @@
-
-
-from injector import Module
+from .loggers import logger
 # from .helpers import *
 from .registry import Registry, set_default_registry, get_default_registry
-from .decorators import inject_from
-from .loggers import logger
-# from injector import Module, provider, Injector, inject
-from injector import provider, inject, Inject
-from injector import singleton, threadlocal as scope_threadlocal, noscope as scope_none
-
+from .decorators import inject_from, inject
+from .registry import Module
+from injector import singleton, provider
 
 
 # .fastapi moved to injectr
