@@ -1,3 +1,5 @@
+import pytest
+
 from src.fastinject import Registry
 from test.objects_for_testing.modules import ModuleDatabase, ModuleTimestamper
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
@@ -14,6 +16,7 @@ def test_singleton_returns_same_object():
     assert id1 == id2
 
 
+@pytest.fixture(scope="function")
 def test_non_singleton_returns_different_object():
     registry = Registry(service_configs=[ModuleTimestamper], auto_bind=True)
 
