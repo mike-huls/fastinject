@@ -54,7 +54,7 @@ Use the service registy imperatively to get and set dependencies on the fly
 - [Declare service to be injectable and declare function to inject imperatively](demo/demo6_add_and_get_service_config_imperatively.py).
 
 Use multiple registries?
-- [Use multiple regisries](demo/demo7_multiple_registries.py)
+- [Use multiple registries](demo/demo7_multiple_registries.py)
 <hr>
 
 ## Usage Example
