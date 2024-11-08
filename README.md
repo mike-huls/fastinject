@@ -32,6 +32,7 @@ pip install fastinject
 - [Documentation](#documentation)
 - [Development](#development)
 - [Contributing to Cachr](#Development)
+<hr>
 
 ## Main Features
 - 🐍 Pure Python
@@ -39,12 +40,28 @@ pip install fastinject
 - 🎩 Tailor-made for your app
 - 👨‍🎨 Easy to use with decorators
 
+## How to
+Injecting services
+- [Register and inject a single service](demo/demo1_inject_single_service.py).
+- [Register and inject a single service as a singleton](demo/demo2_inject_single_service_singleton.py).
+
+Inject services that depend on one another
+- [ServiceConfig: Register multiple dependencies for injection](demo/demo3_inject_service_config.py).
+- [ServiceConfig: Register nested dependencies for injection](demo/demo4_inject_service_config_nested_dependencies.py).
+
+Use the service registy imperatively to get and set dependencies on the fly
+- [Declare service to be injectable imperatively](demo/demo5_add_and_get_services_from_registry.py).
+- [Declare service to be injectable and declare function to inject imperatively](demo/demo6_add_and_get_service_config_imperatively.py).
+
+Use multiple registries?
+- [Use multiple regisries](demo/demo7_multiple_registries.py)
+<hr>
+
 ## Usage Example
+Below details a 
 
-The most easy, straight-forward example is detailed below.
-
-
-Step 1: We have a service that we want to inject, so we mark it `injectable` with a decorator:
+#### Step 1: Declare service to be injectable
+We have a service that we want to inject, so we mark it `injectable` with a decorator:
 ```python
 import time, datetime
 from fastinject import injectable
