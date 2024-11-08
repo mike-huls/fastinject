@@ -77,7 +77,6 @@ class Registry:
 
         # self._injector = Injector([configure_for_testing, di.TestModule()])
         self._injector = Injector(setup, auto_bind=self._auto_bind)
-        print("set default reg")
         set_default_registry(registry=self)
         return self
         # result = RegistryDEPRECATED(self._injector)

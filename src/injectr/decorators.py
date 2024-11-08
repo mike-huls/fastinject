@@ -2,7 +2,9 @@ import inspect
 from functools import wraps
 from typing import Callable, Optional, Type
 
-from . import Registry, get_default_registry
+from .registry import Registry, get_default_registry, Module
+from injector import Binder, Scope, noscope
+
 from .loggers import logger
 from .type_helpers import is_optional_type, get_type_that_optional_wraps
 
@@ -82,3 +84,31 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
         return wrapper
 
     return decorator
+
+
+def injectable(scope: Optional[Scope]=noscope):
+    def decorator(original_class: Type):
+
+        registry = get_default_registry() or Registry()
+
+        if issubclass(original_class, Module):
+            registry.add_module(module=original_class)
+            return original_class
+
+        def configure_for_testing(binder: Binder):
+            """ Puts a service in a registry without the decorators """
+            binder.bind(original_class, to=original_class(), scope=scope)
+        registry.add_setup_function(configure_for_testing)
+
+        return original_class
+    return decorator
+
+def injectables(original_class: Type):
+
+    registry = get_default_registry() or Registry()
+
+    if not issubclass(original_class, Module):
+        raise ValueError(f"{original_class} does not inherit from Module. Must inherit from Module to be injectable.")
+    registry.add_module(module=original_class)
+    return original_class
+
