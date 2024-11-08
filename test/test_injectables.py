@@ -25,6 +25,7 @@ def test_can_inject_with_autobind():
     inject_logger_in_fn()
 
 
+@pytest.fixture(scope="function")
 def test_catch_error_in_getting_service_from_registry():
     # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
     @inject()
@@ -109,6 +110,7 @@ def test_can_inject_from_with_optional_dependency():
     inject_both()
 
 
+@pytest.fixture(scope="function")
 def test_can_inject_from_with_additional_args():
     @inject()
     def inject_logger_in_fn(_logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
@@ -128,7 +130,7 @@ def test_can_inject_from_with_additional_args():
         inject_logger_in_fn(c=5)
 
 
-def test_raises_typeerror_on_nonregistered_type():
+def test_raises_typeerror_on_nonregistered_type_with_injectable():
     """Cannot get type form container that isn't registered; throws"""
 
     @inject()

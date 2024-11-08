@@ -44,6 +44,7 @@ def test_can_inject_from():
     inject_both()
 
 
+@pytest.fixture(scope="function")
 def test_catch_error_in_getting_service_from_registry():
     # 1. Create registry
     registry = DummyRegistry()
@@ -181,7 +182,6 @@ def test_can_inject_from_with_additional_args():
         inject_logger_in_fn(c=5)
 
 
-@pytest.fixture(scope="function")
 def test_raises_typeerror_on_nonregistered_type():
     """Cannot get type form container that isn't registered; throws"""
 
