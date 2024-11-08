@@ -1,6 +1,8 @@
 import logging
 import time
 
+import pytest
+
 from src.fastinject import (
     Registry,
 )
@@ -14,6 +16,7 @@ from test.objects_for_testing.modules import (
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 
 
+@pytest.fixture(scope="function")
 def test_get_from_registry():
     """Test example"""
     registry = Registry(service_configs=[ModuleLogging])
