@@ -6,7 +6,7 @@ import uuid
 
 from injector import Binder
 
-from src.injectr import Registry, singleton, provider, inject, logger, get_default_registry, injectable, ServiceConfig
+from src.fastinject import Registry, singleton, provider, inject, logger, get_default_registry, injectable, ServiceConfig
 
 
 class TimeStamp:

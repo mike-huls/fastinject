@@ -1,7 +1,7 @@
 import logging
 
-from src.injectr import singleton, provider
-from src.injectr.service_config import ServiceConfig
+from src.fastinject import singleton, provider
+from src.fastinject.service_config import ServiceConfig
 from test.objects_for_testing import services
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 

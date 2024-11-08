@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from src.injectr import inject, injectable
+from src.fastinject import inject, injectable
 
 
 @injectable()

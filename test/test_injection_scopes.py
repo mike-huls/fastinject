@@ -1,4 +1,4 @@
-from src.injectr import Registry
+from src.fastinject import Registry
 from test.objects_for_testing.modules import ModuleDatabase, ModuleTimestamper
 from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
 

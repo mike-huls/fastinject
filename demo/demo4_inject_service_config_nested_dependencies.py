@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from src.injectr import inject, injectable, ServiceConfig, singleton, provider
+from src.fastinject import inject, injectable, ServiceConfig, singleton, provider
 
 """ 
 If you have services that need arguments to be inialized or services that are dependent on other services you need the ServiceConfig.

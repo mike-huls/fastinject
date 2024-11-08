@@ -1,12 +1,46 @@
 [project]
-name = "injectr-package"
-version = "0.1.0"
-description = "Add your description here"
+name = "fastinject"
+version = "0.0.1"
+description = "Easy dependency injection in Python."
+authors = [{ name = "Mike Huls", email = "mikehuls42@gmail.com" }]
+license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "injector>=0.22.0",
 ]
+keywords = [ "dependency injection", "injection", "decouple", "decoupled", "inversion" ]
+classifiers = [
+#    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mike-huls/fastinject"
+"Bug Tracker" = "https://github.com/mike-huls/fastinject/issues"
+"Documentation" = "https://github.com/mike-huls/fastinject/blob/master/README.md/"
+"Changelog" = "https://github.com/mike-huls/fastinject/blob/master/CHANGELOG.md/"
+"Source" = "https://github.com/mike-huls/fastinject/"
+"Say Thanks!" = "https://www.buymeacoffee.com/mikehuls"
+
 
 [dependency-groups]
 dev = [
@@ -14,3 +48,6 @@ dev = [
     "pytest>=8.3.3",
     "ruff>=0.7.2",
 ]
+
+[tool.setuptools]
+license-files = ["LICENSE"]

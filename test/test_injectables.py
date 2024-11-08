@@ -5,7 +5,7 @@ from typing import List, Optional
 import pytest
 from injector import singleton, provider
 
-from src.injectr import inject_from, Registry, logger, inject, ServiceConfig, injectable
+from src.fastinject import inject_from, Registry, logger, inject, ServiceConfig, injectable
 from test.objects_for_testing import services
 from test.objects_for_testing.modules_injectables import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
 from test.objects_for_testing.registries import DummyRegistry

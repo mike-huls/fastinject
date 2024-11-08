@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from src.injectr import inject, injectable
+from src.fastinject import inject, injectable
 
 
 """
@@ -28,8 +28,6 @@ class TimeStamp:
 def function_with_injection(ts: TimeStamp):
     print(f"In the injected function, the current time is {ts.datetime_str}.")
 
-
-# todo : test singleton
 
 if __name__ == "__main__":
     function_with_injection()

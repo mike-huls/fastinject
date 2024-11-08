@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from src.injectr import inject, injectable, ServiceConfig, singleton, provider, get_default_registry
+from src.fastinject import inject, injectable, ServiceConfig, singleton, provider, get_default_registry
 
 """ 
 Instead of declaratively marking ServiceConfigs as "injectable", it's also possible to do so imperatively. 

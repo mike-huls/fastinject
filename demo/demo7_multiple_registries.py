@@ -1,7 +1,7 @@
 import datetime
 import time
 from typing import Any, Optional
-from src.injectr import inject, injectable, ServiceConfig, singleton, provider, get_default_registry, Registry
+from src.fastinject import inject, injectable, ServiceConfig, singleton, provider, get_default_registry, Registry
 
 """ 
 In some cases multiple registries may be required. 

@@ -3,7 +3,7 @@ import time
 
 from injector import singleton
 
-from src.injectr import inject, set_default_registry, get_default_registry, injectable
+from src.fastinject import inject, set_default_registry, get_default_registry, injectable
 # from test.objects_for_testing.services_injectable import TimeStamp
 
 

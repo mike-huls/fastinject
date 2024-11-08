@@ -1,6 +1,6 @@
 import logging
 
-from src.injectr import logger, Registry, inject_from
+from src.fastinject import logger, Registry, inject_from
 from test.objects_for_testing import modules
 
 

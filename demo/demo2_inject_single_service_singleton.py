@@ -2,7 +2,7 @@ import datetime
 import time
 from typing import Dict, List
 
-from src.injectr import inject, injectable, singleton
+from src.fastinject import inject, injectable, singleton
 
 
 """

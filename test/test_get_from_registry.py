@@ -5,7 +5,7 @@ from typing import List
 
 import pytest
 
-from src.injectr import (
+from src.fastinject import (
     inject_from,
     Registry,
     set_default_registry,

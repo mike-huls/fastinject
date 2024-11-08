@@ -4,7 +4,7 @@ from typing import List, Optional
 
 import pytest
 
-from src.injectr import (
+from src.fastinject import (
     inject_from,
     Registry,
     logger,

@@ -1,6 +1,6 @@
 import logging
 
-from src.injectr import Registry
+from src.fastinject import Registry
 from test.objects_for_testing import services
 from test.objects_for_testing.modules import ModuleLogging, ModuleDatabase
 from test.objects_for_testing.services import MyDatabaseConfig
