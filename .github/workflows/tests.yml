@@ -27,12 +27,12 @@ jobs:
 
     - name: Run unit test
       run: |
-        coverage run --omit="test/*" -m pytest -v
+        uv run coverage run --omit="test/*" -m pytest -v
 
     - name: Create coverage
       run: |
-        coverage report
-        coverage xml
+        uv run coverage report
+        uv run coverage xml
 
     - name: Push coverage to codecov
       run: |
