@@ -1,18 +1,11 @@
 import logging
 import time
-import unittest
-from typing import List
-
-import pytest
 
 from src.fastinject import (
-    inject_from,
     Registry,
-    set_default_registry,
 )
 from test.objects_for_testing import services
 from test.objects_for_testing.modules import (
-    ModuleDatabaseLogging,
     ModuleLogging,
     ModuleDatabase,
     ModuleTimestamper,

@@ -1,4 +1,4 @@
-from typing import get_origin, Union, get_args, Optional, Type
+from typing import get_origin, Union, get_args, Type
 
 
 def is_optional_type(param_type: Type) -> bool:

@@ -51,3 +51,7 @@ dev = [
 
 [tool.setuptools]
 license-files = ["LICENSE"]
+
+[tool.ruff]
+exclude = ["*/__init__.py"]
+ignore = ["F401"]   # exclude imported but unused

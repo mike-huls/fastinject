@@ -2,11 +2,11 @@ import inspect
 from functools import wraps
 from typing import Callable, Optional, Type
 
-from .registry import Registry, get_default_registry
-from .service_config import ServiceConfig
-from injector import Binder, Scope, noscope
+from injector import Scope
 
 from .loggers import logger
+from .registry import Registry, get_default_registry
+from .service_config import ServiceConfig
 from .type_helpers import is_optional_type, get_type_that_optional_wraps
 
 

@@ -1,12 +1,9 @@
 import datetime
 import logging
 import time
-from typing import Optional, Type
 import uuid
 
-from injector import Binder
-
-from src.fastinject import Registry, singleton, provider, inject, logger, get_default_registry, injectable, ServiceConfig
+from src.fastinject import singleton, provider, inject, logger, get_default_registry, injectable, ServiceConfig
 
 
 class TimeStamp:

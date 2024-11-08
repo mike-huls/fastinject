@@ -1,25 +1,25 @@
 import logging
-import unittest
-from typing import NewType, Optional
+from typing import Optional
 
 import pytest
 
-from src.fastinject import inject_from, Registry, set_default_registry, get_default_registry
+from src.fastinject import Registry, get_default_registry
 from src.fastinject.decorators import inject
 from test.objects_for_testing import services
-from test.objects_for_testing.modules import ModuleDatabaseLogging, ModuleTimestamper
+from test.objects_for_testing.modules import ModuleDatabaseLogging
 
 
 def test_inject_from_default_registry():
     """Test example"""
     # 1. Create registry
     registy = Registry(service_configs=[ModuleDatabaseLogging])
+    assert registy is not None
     assert get_default_registry() is not None
 
     @inject()
-    def getlogger(logger: logging.Logger) -> None:
-        print("in logger, logger = ", logger)
-        assert logger is not None
+    def getlogger(_logger: logging.Logger) -> None:
+        print("in logger, logger = ", _logger)
+        assert _logger is not None
 
     getlogger()
 
@@ -32,6 +32,7 @@ def test_inject_raises_if_module_not_registered_from_default_registry_double():
             ModuleDatabaseLogging,
         ]
     )  # ModuleTimestamper])
+    assert registy is not None
     assert get_default_registry() is not None
 
     @inject()
@@ -49,11 +50,12 @@ def test_injects_none_on_missing_service():
             ModuleDatabaseLogging,
         ]
     )  # ModuleTimestamper])
+    assert registy is not None
     assert get_default_registry() is not None
 
     @inject()
-    def getlogger(logger: logging.Logger, ts: Optional[services.TimeStamp] = None) -> None:
-        assert logger is not None
+    def getlogger(_logger: logging.Logger, ts: Optional[services.TimeStamp] = None) -> None:
+        assert _logger is not None
         assert ts is None
 
     getlogger()
@@ -61,6 +63,7 @@ def test_injects_none_on_missing_service():
 
 def test_imperative():
     reg = get_default_registry()
+    assert reg is not None
 
 
 # def test_inject_raises_if_no_registry_set():

@@ -7,7 +7,6 @@ import pytest
 from src.fastinject import (
     inject_from,
     Registry,
-    logger,
 )
 from test.objects_for_testing import services
 from test.objects_for_testing.modules import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
@@ -25,8 +24,8 @@ def test_can_inject_from():
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def inject_logger_in_fn(logger: logging.Logger):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: logging.Logger):
+        assert _logger is not None
 
     @inject_from(registry=registry)
     def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
@@ -34,10 +33,10 @@ def test_can_inject_from():
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject_from(registry=registry)
-    def inject_both(dbcon: MyDatabaseConfig, logger: logging.Logger):
+    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
-        assert logger is not None
+        assert _logger is not None
 
     # 3. Call decorated functions
     inject_logger_in_fn()
@@ -51,10 +50,10 @@ def test_catch_error_in_getting_service_from_registry():
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def injected_fn(dbcon: MyDatabaseConfig, logger: logging.Logger):
+    def injected_fn(dbcon: MyDatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
-        assert logger is not None
+        assert _logger is not None
 
     # 3. Call decorated functions
     with pytest.raises(ValueError):
@@ -137,8 +136,8 @@ def test_can_inject_from_with_optional_dependency():
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def inject_logger_in_fn(logger: Optional[logging.Logger]):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: Optional[logging.Logger]):
+        assert _logger is not None
 
     @inject_from(registry=registry)
     def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
@@ -146,10 +145,10 @@ def test_can_inject_from_with_optional_dependency():
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject_from(registry=registry)
-    def inject_both(dbcon: MyDatabaseConfig, logger: logging.Logger):
+    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
-        assert logger is not None
+        assert _logger is not None
 
     # 3. Call decorated functions
     inject_logger_in_fn()
@@ -163,8 +162,8 @@ def test_can_inject_from_with_additional_args():
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def inject_logger_in_fn(logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
+        assert _logger is not None
         assert isinstance(a, int)
         assert isinstance(b, int)
         assert isinstance(c, int) or c is None
@@ -187,8 +186,8 @@ def test_raises_typeerror_on_nonregistered_type():
     registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
 
     @inject_from(registry=registry)
-    def inject_non_existent(logger: List):
-        assert logger is None
+    def inject_non_existent(_logger: List):
+        assert _logger is None
 
     with pytest.raises(TypeError):
         inject_non_existent()
@@ -201,9 +200,10 @@ def test_can_inject_in_class():
     # 2. Decorate class with registry to inject from
     class MyClass:
         @inject_from(registry=registry)
-        def __init__(self, logger: logging.Logger):
-            self.logger = logger
-            assert logger is not None
+        def __init__(self, _logger: logging.Logger):
+            self.logger = _logger
+            assert _logger is not None
 
     # 3. Create instance and call decorated function
     my_class = MyClass()
+    assert my_class is not None

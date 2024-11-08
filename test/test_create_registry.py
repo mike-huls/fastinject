@@ -39,6 +39,6 @@ def test_create_registry_add_service_works():
     assert registy.get(interface=services.TimeStamp) is not None
 
 
-def test_create_registry_add_service_works():
+def test_create_registry_with_services():
     registy = Registry(services=[services.TimeStamp])
     assert registy.get(interface=services.TimeStamp) is not None

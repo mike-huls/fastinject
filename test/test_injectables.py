@@ -1,15 +1,13 @@
 import logging
-import time
 from typing import List, Optional
 
 import pytest
 from injector import singleton, provider
 
-from src.fastinject import inject_from, Registry, logger, inject, ServiceConfig, injectable
-from test.objects_for_testing import services
-from test.objects_for_testing.modules_injectables import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
+from src.fastinject import Registry, inject, injectable, ServiceConfig
+from test.objects_for_testing.modules_injectables import ModuleLogging, ModuleDatabase
 from test.objects_for_testing.registries import DummyRegistry
-from test.objects_for_testing.services import TimeStampLogger, MyDatabaseConfig
+from test.objects_for_testing.services import MyDatabaseConfig
 from test.objects_for_testing.services_injectable import NotInjectedService, TimeStamp
 
 
@@ -20,8 +18,8 @@ class NonRegisteredClass:
 def test_can_inject_with_autobind():
     # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
     @inject()
-    def inject_logger_in_fn(logger: logging.Logger):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: logging.Logger):
+        assert _logger is not None
 
     # 3. Call decorated functions
     inject_logger_in_fn()
@@ -42,6 +40,7 @@ def test_catch_error_in_getting_service_from_registry():
 def test_inject_none_if_error_in_getting_optional_service_from_registry():
     # 1. Create registry
     registry = DummyRegistry()
+    assert registry is not None
 
     # 2. Decorate functions with registry to inject from
     @inject()
@@ -86,11 +85,12 @@ def test_raises_on_injecting_unregisterd_optional_object_when_not_inject_none():
 def test_can_inject_from_with_optional_dependency():
     # 1. Create registry
     registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    assert registry is not None
 
     # 2. Decorate functions with registry to inject from
     @inject()
-    def inject_logger_in_fn(logger: Optional[logging.Logger]):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: Optional[logging.Logger]):
+        assert _logger is not None
 
     @inject()
     def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
@@ -98,10 +98,10 @@ def test_can_inject_from_with_optional_dependency():
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject()
-    def inject_both(dbcon: MyDatabaseConfig, logger: logging.Logger):
+    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
-        assert logger is not None
+        assert _logger is not None
 
     # 3. Call decorated functions
     inject_logger_in_fn()
@@ -111,8 +111,8 @@ def test_can_inject_from_with_optional_dependency():
 
 def test_can_inject_from_with_additional_args():
     @inject()
-    def inject_logger_in_fn(logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
-        assert logger is not None
+    def inject_logger_in_fn(_logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
+        assert _logger is not None
         assert isinstance(a, int)
         assert isinstance(b, int)
         assert isinstance(c, int) or c is None
@@ -132,8 +132,8 @@ def test_raises_typeerror_on_nonregistered_type():
     """Cannot get type form container that isn't registered; throws"""
 
     @inject()
-    def inject_non_existent(logger: List):
-        assert logger is None
+    def inject_non_existent(_logger: List):
+        assert _logger is None
 
     with pytest.raises(TypeError):
         inject_non_existent()
@@ -143,12 +143,13 @@ def test_can_inject_in_class():
     # 2. Decorate class with registry to inject from
     class MyClass:
         @inject()
-        def __init__(self, logger: logging.Logger):
-            self.logger = logger
-            assert logger is not None
+        def __init__(self, _logger: logging.Logger):
+            self.logger = _logger
+            assert _logger is not None
 
     # 3. Create instance and call decorated function
     my_class = MyClass()
+    assert my_class is not None
 
 
 def test_raises_when_decorating_wrongtype_class_with_injectables():

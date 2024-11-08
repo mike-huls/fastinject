@@ -1,10 +1,10 @@
-import logging
 from typing import Any, Type, Union, Callable, List, Optional  # , Self,  Iterable
 
 from injector import Injector, Binder
-from injector import Scope, ScopeDecorator
+from injector import Scope, ScopeDecorator, Module
 from injector import T
 from .service_config import ServiceConfig
+
 
 # _InstallableModuleType = Union[Callable[['XBinder'], None], 'Module', Type['Module']]
 _InstallableModuleType = Union["Module", Type["Module"]]
