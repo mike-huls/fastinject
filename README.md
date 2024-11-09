@@ -55,6 +55,9 @@ Use the service registy imperatively to get and set dependencies on the fly
 
 Use multiple registries?
 - [Use multiple registries](demo/demo7_multiple_registries.py)
+
+Register similar services?
+- [Register multiple services of the same type?](demo/demo8_register_multiple_instances_of_the_same_type.py)
 <hr>
 
 ## Usage Example

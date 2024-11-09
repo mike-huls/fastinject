@@ -1,15 +1,12 @@
 from typing import NewType
 
-from src.fastinject import Registry
+from src.fastinject import Registry, ServiceConfig, provider
 from test.objects_for_testing import services
-from src.fastinject import Registry, inject, injectable, ServiceConfig, provider
-
-DBConfig1 = NewType("DatabaseConfig", services.DatabaseConfig)
-DBConfig2 = NewType("DatabaseConfig", services.DatabaseConfig)
-
 
 
 def test_can_register_multiple_instances_of_same_type():
+    DBConfig1 = NewType("DatabaseConfig", services.DatabaseConfig)
+    DBConfig2 = NewType("DatabaseConfig", services.DatabaseConfig)
 
     class MyServiceConfig(ServiceConfig):
         @provider
