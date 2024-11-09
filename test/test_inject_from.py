@@ -9,9 +9,9 @@ from src.fastinject import (
     Registry,
 )
 from test.objects_for_testing import services
-from test.objects_for_testing.modules import ModuleLogging, ModuleDatabase, ModuleNestedDependenciesSimple
+from test.objects_for_testing.service_configs import SCLogging, SCDatabase, SCNestedDependenciesSimple
 from test.objects_for_testing.registries import DummyRegistry
-from test.objects_for_testing.services import MyDatabaseConfig, TimeStampLogger
+from test.objects_for_testing.services import DatabaseConfig, TimeStampLogger
 
 
 class NonRegisteredClass:
@@ -20,7 +20,7 @@ class NonRegisteredClass:
 
 def test_can_inject_from():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -28,12 +28,12 @@ def test_can_inject_from():
         assert _logger is not None
 
     @inject_from(registry=registry)
-    def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
+    def inject_dbconfig_in_fn(dbcon: DatabaseConfig):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject_from(registry=registry)
-    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
+    def inject_both(dbcon: DatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert _logger is not None
@@ -44,14 +44,14 @@ def test_can_inject_from():
     inject_both()
 
 
-@pytest.fixture(scope="function")
+# @pytest.fixture(scope="function")
 def test_catch_error_in_getting_service_from_registry():
     # 1. Create registry
     registry = DummyRegistry()
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def injected_fn(dbcon: MyDatabaseConfig, _logger: logging.Logger):
+    def injected_fn(dbcon: DatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert _logger is not None
@@ -67,7 +67,7 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
-    def injected_fn(dbcon: Optional[MyDatabaseConfig] = None):
+    def injected_fn(dbcon: Optional[DatabaseConfig] = None):
         assert dbcon is None
 
     # 3. Call decorated functions
@@ -77,7 +77,7 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
 @pytest.fixture(scope="function")
 def test_raises_on_injecting_unregisterd_required_object():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -90,7 +90,7 @@ def test_raises_on_injecting_unregisterd_required_object():
 
 def test_returns_none_on_injecting_unregisterd_optional_object():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -103,7 +103,7 @@ def test_returns_none_on_injecting_unregisterd_optional_object():
 
 def test_raises_on_injecting_unregisterd_optional_object_when_not_inject_none():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry, inject_missing_optional_as_none=False)
@@ -117,7 +117,7 @@ def test_raises_on_injecting_unregisterd_optional_object_when_not_inject_none():
 
 def test_can_inject_from_nested_dependencies():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleNestedDependenciesSimple])
+    registry = Registry(service_configs=[SCNestedDependenciesSimple])
 
     @inject_from(registry=registry)
     def inject_logger_in_fn(ts: services.TimeStamp, tslogger: TimeStampLogger):
@@ -134,7 +134,7 @@ def test_can_inject_from_nested_dependencies():
 
 def test_can_inject_from_with_optional_dependency():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -142,12 +142,12 @@ def test_can_inject_from_with_optional_dependency():
         assert _logger is not None
 
     @inject_from(registry=registry)
-    def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
+    def inject_dbconfig_in_fn(dbcon: DatabaseConfig):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject_from(registry=registry)
-    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
+    def inject_both(dbcon: DatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert _logger is not None
@@ -161,7 +161,7 @@ def test_can_inject_from_with_optional_dependency():
 @pytest.fixture(scope="function")
 def test_can_inject_from_with_additional_args():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate functions with registry to inject from
     @inject_from(registry=registry)
@@ -187,7 +187,7 @@ def test_raises_typeerror_on_nonregistered_type():
     """Cannot get type form container that isn't registered; throws"""
 
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     @inject_from(registry=registry)
     def inject_non_existent(_logger: List):
@@ -199,7 +199,7 @@ def test_raises_typeerror_on_nonregistered_type():
 
 def test_can_inject_in_class():
     # 1. Create registry
-    registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
+    registry = Registry(service_configs=[SCLogging, SCDatabase])
 
     # 2. Decorate class with registry to inject from
     class MyClass:

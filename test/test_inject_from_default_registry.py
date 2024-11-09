@@ -5,14 +5,14 @@ import pytest
 
 from src.fastinject import Registry, get_default_registry
 from src.fastinject.decorators import inject
-from test.objects_for_testing import services
-from test.objects_for_testing.modules import ModuleDatabaseLogging
+from test.objects_for_testing import services, service_configs
+from test.objects_for_testing.service_configs import SCDatabaseLogging
 
 
 def test_inject_from_default_registry():
     """Test example"""
     # 1. Create registry
-    registy = Registry(service_configs=[ModuleDatabaseLogging])
+    registy = Registry(service_configs=[SCDatabaseLogging])
     assert registy is not None
     assert get_default_registry() is not None
 
@@ -30,7 +30,7 @@ def test_inject_raises_if_module_not_registered_from_default_registry_double():
     # 1. Create registry
     registy = Registry(
         service_configs=[
-            ModuleDatabaseLogging,
+            SCDatabaseLogging,
         ]
     )  # ModuleTimestamper])
     assert registy is not None
@@ -46,11 +46,7 @@ def test_inject_raises_if_module_not_registered_from_default_registry_double():
 def test_injects_none_on_missing_service():
     """Test example"""
     # 1. Create registry
-    registy = Registry(
-        service_configs=[
-            ModuleDatabaseLogging,
-        ]
-    )  # ModuleTimestamper])
+    registy = Registry(service_configs=[SCDatabaseLogging])
     assert registy is not None
     assert get_default_registry() is not None
 
@@ -65,6 +61,18 @@ def test_injects_none_on_missing_service():
 def test_imperative():
     reg = get_default_registry()
     assert reg is not None
+
+
+def test_raises_on_failed_service_init():
+    """Test example"""
+    # 1. Create registry
+    registy = Registry(service_configs=[service_configs.SCDatabaseInitFails])
+    assert registy is not None
+    assert get_default_registry() is not None
+
+    # this will init the services
+    with pytest.raises(Exception):
+        d = registy.get(services.DatabaseConnection)
 
 
 # def test_inject_raises_if_no_registry_set():

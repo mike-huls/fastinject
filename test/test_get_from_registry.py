@@ -7,27 +7,27 @@ from src.fastinject import (
     Registry,
 )
 from test.objects_for_testing import services
-from test.objects_for_testing.modules import (
-    ModuleLogging,
-    ModuleDatabase,
-    ModuleTimestamper,
-    ModuleTimestamperWeirdImport,
+from test.objects_for_testing.service_configs import (
+    SCLogging,
+    SCDatabase,
+    SCTimestamper,
+    SCTimestamperWeirdImport,
 )
-from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp
+from test.objects_for_testing.services import DatabaseConfig, TimeStamp
 
 
 @pytest.fixture(scope="function")
 def test_get_from_registry():
     """Test example"""
-    registry = Registry(service_configs=[ModuleLogging])
+    registry = Registry(service_configs=[SCLogging])
     assert registry.get(logging.Logger) is not None
-    assert registry.get(ModuleTimestamper) is None
+    assert registry.get(SCTimestamper) is None
 
 
 @pytest.fixture(scope="function")
 def test_can_get_from_registry_folder_import():
     """The service is imported like folder.Classname in the Module"""
-    registry = Registry(service_configs=[ModuleTimestamperWeirdImport])
+    registry = Registry(service_configs=[SCTimestamperWeirdImport])
     assert registry.get(services.TimeStamp) is not None
     assert registry.get(TimeStamp) is not None
 
@@ -36,10 +36,10 @@ def test_get_from_registry_autobind():
     """Even though ModuleTimestamp is not registered on the registry, when we auto_bind=True, injector will resolve the dependency.
     This is becauase it searches the type in all functions decorated with @provider"""
     # Create registry
-    registry = Registry(service_configs=[ModuleDatabase], auto_bind=True)
+    registry = Registry(service_configs=[SCDatabase], auto_bind=True)
 
     # Can find both modules even though
-    assert registry.get(MyDatabaseConfig) is not None
+    assert registry.get(DatabaseConfig) is not None
     assert registry.get(TimeStamp) is not None
 
     # Assert that ts is a full TimeStamp with all methods etc.

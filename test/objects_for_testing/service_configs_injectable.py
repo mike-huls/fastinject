@@ -2,7 +2,7 @@ import logging
 
 from src.fastinject import singleton, provider, injectable
 from src.fastinject.service_config import ServiceConfig
-from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp, TimeStampLogger
+from test.objects_for_testing.services import DatabaseConfig, TimeStamp, TimeStampLogger
 
 
 # ConnectionString = NewType("ConnectionString", str)
@@ -12,8 +12,8 @@ from test.objects_for_testing.services import MyDatabaseConfig, TimeStamp, TimeS
 class ModuleDatabaseLogging(ServiceConfig):
     @singleton
     @provider
-    def provide_config(self) -> MyDatabaseConfig:
-        return MyDatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
+    def provide_config(self) -> DatabaseConfig:
+        return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
     @singleton
     @provider
@@ -33,8 +33,8 @@ class ModuleLogging(ServiceConfig):
 class ModuleDatabase(ServiceConfig):
     @singleton
     @provider
-    def provide_config(self) -> MyDatabaseConfig:
-        return MyDatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
+    def provide_config(self) -> DatabaseConfig:
+        return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
 
 @injectable()

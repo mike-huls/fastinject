@@ -5,9 +5,9 @@ import pytest
 from injector import singleton, provider
 
 from src.fastinject import Registry, inject, injectable, ServiceConfig
-from test.objects_for_testing.modules_injectables import ModuleLogging, ModuleDatabase
+from test.objects_for_testing.service_configs_injectable import ModuleLogging, ModuleDatabase
 from test.objects_for_testing.registries import DummyRegistry
-from test.objects_for_testing.services import MyDatabaseConfig
+from test.objects_for_testing.services import DatabaseConfig
 from test.objects_for_testing.services_injectable import NotInjectedService, TimeStamp
 
 
@@ -15,6 +15,7 @@ class NonRegisteredClass:
     pass
 
 
+@pytest.fixture(scope="function")
 def test_can_inject_with_autobind():
     # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
     @inject()
@@ -95,12 +96,12 @@ def test_can_inject_from_with_optional_dependency():
         assert _logger is not None
 
     @inject()
-    def inject_dbconfig_in_fn(dbcon: MyDatabaseConfig):
+    def inject_dbconfig_in_fn(dbcon: DatabaseConfig):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
 
     @inject()
-    def inject_both(dbcon: MyDatabaseConfig, _logger: logging.Logger):
+    def inject_both(dbcon: DatabaseConfig, _logger: logging.Logger):
         assert dbcon is not None
         assert dbcon.connection_string == "file:memdb1?mode=memory&cache=shared3"
         assert _logger is not None
@@ -162,5 +163,5 @@ def test_raises_when_decorating_wrongtype_class_with_injectables():
         # todo test wheteher only some functions within a class can be providers
         @singleton
         @provider
-        def provide_config(self) -> MyDatabaseConfig:
-            return MyDatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
+        def provide_config(self) -> DatabaseConfig:
+            return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
