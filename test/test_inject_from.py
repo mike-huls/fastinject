@@ -74,7 +74,7 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
     injected_fn()
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function")
 def test_raises_on_injecting_unregisterd_required_object():
     # 1. Create registry
     registry = Registry(service_configs=[SCLogging, SCDatabase])

@@ -27,7 +27,6 @@ def test_singleton_returns_same_object():
     assert registry.get(TimeStamp) is not None
 
 
-# @pytest.fixture(scope="function")
 @pytest.fixture(scope="function")
 def test_non_singleton_returns_different_object():
     class SCTimestamper(ServiceConfig):
