@@ -10,26 +10,22 @@ from test.objects_for_testing.services import DatabaseConfig, TimeStamp
 
 
 class SCDatabaseLogging(ServiceConfig):
-    @singleton
     @provider
     def provide_config(self) -> DatabaseConfig:
         return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
-    @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
 
 
 class SCLogging(ServiceConfig):
-    @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
 
 
 class SCDatabase(ServiceConfig):
-    @singleton
     @provider
     def provide_config(self) -> DatabaseConfig:
         return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
@@ -42,14 +38,12 @@ class SCTimestamper(ServiceConfig):
 
 
 class SCTimestamperWeirdImport(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> services.TimeStamp:
         return services.TimeStamp()
 
 
 class SCNestedDependenciesSimple(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> services.TimeStamp:
         return services.TimeStamp()
@@ -60,7 +54,6 @@ class SCNestedDependenciesSimple(ServiceConfig):
 
 
 class SCDatabaseInitFails(ServiceConfig):
-    @singleton
     @provider
     def provide_db_config(self) -> services.DatabaseConfig:
         return services.DatabaseConfig(connection_string="my_db_constring")

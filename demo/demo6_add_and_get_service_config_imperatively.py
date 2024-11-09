@@ -25,12 +25,10 @@ class DatabaseConnection:
 
 
 class MyServiceConfig(ServiceConfig):
-    @singleton
     @provider
     def provide_app_config(self) -> AppConfiguration:
         return AppConfiguration("my_db_config_string")
 
-    @singleton
     @provider
     def provide_database_connection(self) -> DatabaseConnection:
         return DatabaseConnection(connection_string=self.provide_app_config().connection_string)

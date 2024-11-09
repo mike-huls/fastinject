@@ -7,7 +7,7 @@ from .service_config import ServiceConfig
 
 
 # _InstallableModuleType = Union[Callable[['XBinder'], None], 'Module', Type['Module']]
-_InstallableModuleType = Union["Module", Type["Module"]]
+_InstallableModuleType = Union["Service", Type["Service"]]
 
 
 # class XBinder(Binder):

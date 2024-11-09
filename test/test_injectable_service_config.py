@@ -161,7 +161,6 @@ def test_raises_when_decorating_wrongtype_class_with_injectables():
     @injectable()
     class ModuleDatabase(ServiceConfig):
         # todo test wheteher only some functions within a class can be providers
-        @singleton
         @provider
         def provide_config(self) -> DatabaseConfig:
             return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")

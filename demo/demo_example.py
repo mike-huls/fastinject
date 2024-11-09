@@ -26,12 +26,10 @@ class IdGenerator:
 
 @injectable()
 class MyConfig(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
 
-    @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("LoggerName")

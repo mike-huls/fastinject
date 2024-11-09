@@ -28,7 +28,6 @@ class LabelPrinter:
 
 @injectable()
 class MyServiceConfig(ServiceConfig):
-    @singleton
     @provider
     def provide_label_printer(self) -> LabelPrinter:
         # Here we specify how to instantiate the servcie and with what arguments. We can reference an environment variable here as wel e.g.

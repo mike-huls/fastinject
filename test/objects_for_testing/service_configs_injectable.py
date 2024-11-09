@@ -10,12 +10,10 @@ from test.objects_for_testing.services import DatabaseConfig, TimeStamp, TimeSta
 
 @injectable()
 class ModuleDatabaseLogging(ServiceConfig):
-    @singleton
     @provider
     def provide_config(self) -> DatabaseConfig:
         return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
 
-    @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
@@ -23,7 +21,6 @@ class ModuleDatabaseLogging(ServiceConfig):
 
 @injectable()
 class ModuleLogging(ServiceConfig):
-    @singleton
     @provider
     def provide_logger(self) -> logging.Logger:
         return logging.getLogger("testing")
@@ -31,7 +28,6 @@ class ModuleLogging(ServiceConfig):
 
 @injectable()
 class ModuleDatabase(ServiceConfig):
-    @singleton
     @provider
     def provide_config(self) -> DatabaseConfig:
         return DatabaseConfig(connection_string="file:memdb1?mode=memory&cache=shared3")
@@ -46,7 +42,6 @@ class ModuleTimestamper(ServiceConfig):
 
 @injectable()
 class ModuleTimestamperWeirdImport(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
@@ -54,7 +49,6 @@ class ModuleTimestamperWeirdImport(ServiceConfig):
 
 @injectable()
 class ModuleNestedDependenciesSimple(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
@@ -66,7 +60,6 @@ class ModuleNestedDependenciesSimple(ServiceConfig):
 
 @injectable()
 class ModuleWithTimeStampButNoNoopService(ServiceConfig):
-    @singleton
     @provider
     def provide_timestamper(self) -> TimeStamp:
         return TimeStamp()
