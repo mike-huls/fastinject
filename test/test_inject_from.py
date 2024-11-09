@@ -211,3 +211,5 @@ def test_can_inject_in_class():
     # 3. Create instance and call decorated function
     my_class = MyClass()
     assert my_class is not None
+
+
