@@ -85,7 +85,7 @@ def test_raises_on_injecting_unregisterd_optional_object_when_not_inject_none():
         inject_logger_in_fn()
 
 
-def test_can_inject_from_with_optional_dependency():
+def test_sc_can_inject_from_with_optional_dependency():
     # 1. Create registry
     registry = Registry(service_configs=[ModuleLogging, ModuleDatabase])
     assert registry is not None
