@@ -26,6 +26,7 @@ def test_can_inject_with_autobind():
     inject_logger_in_fn()
 
 
+@pytest.fixture(scope="function")
 def test_sc_catch_error_in_getting_service_from_registry():
     # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
     @inject()

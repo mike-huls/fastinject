@@ -6,6 +6,7 @@
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/htmlcov" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/src/fastinject.egg-info" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.9 (injectr_package) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
