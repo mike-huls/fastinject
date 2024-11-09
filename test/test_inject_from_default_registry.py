@@ -18,7 +18,6 @@ def test_inject_from_default_registry():
 
     @inject()
     def getlogger(_logger: logging.Logger) -> None:
-        print("in logger, logger = ", _logger)
         assert _logger is not None
 
     getlogger()

@@ -20,14 +20,12 @@ def test_injectable_servcie_is_injectable():
 
     @inject()
     def function_with_injection(ts: TimeStamp):
-        print(f"In the injected function, the current time is {ts.datetime_str}.")
         assert ts is not None
 
     # set_default_registry(registry=None)
     function_with_injection()
     reg = get_default_registry()
-    print(reg.get(TimeStamp))
-    print(reg.get(TimeStamp))
+    assert reg is not None
 
 
 def test_injectable_service_is_not_singleton():
@@ -43,11 +41,8 @@ def test_injectable_service_is_not_singleton():
         id_1 = id(ts)
         ts_1 = ts.ts
 
-        print(id(ts), ts.ts)
-
         @inject()
         def other_function_with_injection(ts: _TimeStamp):
-            print(id(ts), ts.ts)
             assert id(ts) != id_1
             assert ts.ts != ts_1
 
@@ -56,8 +51,7 @@ def test_injectable_service_is_not_singleton():
 
     # set_default_registry(registry=None)
     reg = get_default_registry()
-    print(id(reg.get(_TimeStamp)))
-    print(id(reg.get(_TimeStamp)))
+    assert reg is not None
     function_with_injection()
 
 
@@ -74,11 +68,8 @@ def test_injectable_servcie_singleton_works():
         id_1 = id(ts)
         ts_1 = ts.ts
 
-        print(id(ts), ts.ts)
-
         @inject()
         def other_function_with_injection(ts: TimeStamp):
-            print(id(ts), ts.ts)
             assert id(ts) == id_1
             assert ts.ts == ts_1
 

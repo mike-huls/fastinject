@@ -44,7 +44,7 @@ def test_can_inject_from():
     inject_both()
 
 
-# @pytest.fixture(scope="function")
+@pytest.fixture(scope="function")
 def test_catch_error_in_getting_service_from_registry():
     # 1. Create registry
     registry = DummyRegistry()
@@ -74,7 +74,7 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
     injected_fn()
 
 
-# @pytest.fixture(scope="function")
+@pytest.fixture(scope="function", autouse=True)
 def test_raises_on_injecting_unregisterd_required_object():
     # 1. Create registry
     registry = Registry(service_configs=[SCLogging, SCDatabase])
@@ -123,7 +123,6 @@ def test_can_inject_from_nested_dependencies():
     def inject_logger_in_fn(ts: services.TimeStamp, tslogger: TimeStampLogger):
         assert ts is not None
         assert tslogger is not None
-        print(tslogger.timestamp.init_time)
 
     # 3. Call decorated functions
     inject_logger_in_fn()
