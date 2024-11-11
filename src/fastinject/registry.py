@@ -114,7 +114,7 @@ class Registry:
             return self._injector.get(interface=interface, scope=scope)
         except Exception as e:
             logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
-            raise e
+            return None
 
     def call_with_injection(
         self,

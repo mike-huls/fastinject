@@ -22,16 +22,13 @@ def test_get_from_registry():
     """Test example"""
     registry = Registry(service_configs=[SCLogging])
     assert registry.get(logging.Logger) is not None
-    try:
-        assert registry.get(SCTimestamper) is None
-    except Exception as e:
-        print(f"xxxx - error: {e}")
+    assert registry.get(SCTimestamper) is None
 
 
 # @patch('src.fastinject.registry.__default_registry', new_callable=lambda: Registry())
 # def test_get_from_registry(reg:Registry):
 
-@pytest.fixture(scope="function")
+# @pytest.fixture(scope="function")
 def test_can_get_from_registry_folder_import():
     """The service is imported like folder.Classname in the Module"""
     registry = Registry(service_configs=[SCTimestamperWeirdImport])
