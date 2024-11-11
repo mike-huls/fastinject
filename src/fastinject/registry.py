@@ -53,8 +53,10 @@ class Registry:
             self.add_service(service=service)
         self.__build()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"<Registry ({len(self._service_configs)} service configs, {len(self._services)} services)>"
+    def __repr__(self) -> str:
+        return self.__str__()
 
     def add_service(self, service: Type, scope: Optional[Scope] = None) -> "Registry":
         def _setup_function(binder: Binder):
