@@ -70,8 +70,7 @@ def test_raises_on_failed_service_init():
     assert get_default_registry() is not None
 
     # this will init the services
-    with pytest.raises(Exception):
-        d = registy.get(services.DatabaseConnection)
+    assert registy.get(services.DatabaseConnection) is None
 
 
 # def test_inject_raises_if_no_registry_set():

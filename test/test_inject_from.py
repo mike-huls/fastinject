@@ -44,7 +44,6 @@ def test_can_inject_from():
     inject_both()
 
 
-@pytest.fixture(scope="function")
 def test_catch_error_in_getting_service_from_registry():
     # 1. Create registry
     registry = DummyRegistry()
