@@ -1,5 +1,6 @@
 import logging
 import time
+from unittest.mock import patch
 
 import pytest
 
@@ -16,9 +17,10 @@ from test.objects_for_testing.service_configs import (
 from test.objects_for_testing.services import DatabaseConfig, TimeStamp
 
 
-@pytest.fixture(scope="function")
-def test_get_from_registry():
+@patch('src.fastinject.registry.__default_registry', new_callable=lambda: Registry())
+def test_get_from_registry(reg:Registry):
     """Test example"""
+    print(reg)
     registry = Registry(service_configs=[SCLogging])
     assert registry.get(logging.Logger) is not None
     assert registry.get(SCTimestamper) is None

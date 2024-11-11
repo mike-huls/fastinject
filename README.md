@@ -1,13 +1,14 @@
-#FastInject: easy Python dependency injection
+# FastInject: easy Python dependency injection
 
-![coverage](https://img.shields.io/codecov/c/github/mike-huls/fastinject)
-![Tests](https://github.com/mike-huls/fastinject/actions/workflows/tests.yml/badge.svg)
-![version](https://img.shields.io/pypi/v/fastinject?color=%2334D058&label=pypi%20package)
-![dependencies](https://img.shields.io/librariesio/release/pypi/fastinject)
-![PyPI Downloads](https://img.shields.io/pypi/dm/fastinject.svg?label=PyPI%20downloads)
-![versions](https://img.shields.io/pypi/pyversions/fastinject.svg?color=%2334D058)
+[![coverage](https://img.shields.io/codecov/c/github/mike-huls/fastinject)](https://codecov.io/gh/mike-huls/fastinject)
+[![Tests](https://github.com/mike-huls/fastinject/actions/workflows/tests.yml/badge.svg)](https://github.com/mike-huls/fastinject/actions/workflows/tests.yml)
+[![version](https://img.shields.io/pypi/v/fastinject?color=%2334D058&label=pypi%20package)](https://pypi.org/project/fastinject)
+[![dependencies](https://img.shields.io/librariesio/release/pypi/fastinject)](https://pypi.org/project/fastinject)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/fastinject.svg?label=PyPI%20downloads)](https://pypistats.org/packages/fastinject)
+[![versions](https://img.shields.io/pypi/pyversions/fastinject.svg?color=%2334D058)](https://pypi.org/project/fastinject)
 <br>
-![tweet](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fmike-huls%2Ffastinject) ![xfollow](https://img.shields.io/twitter/follow/mike_huls?style=social)
+[![tweet](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fmike-huls%2Ffastinject)](https://twitter.com/intent/tweet?text=Check%20this%20out:&url=https%3A%2F%2Fgithub.com%2Fmike-huls%2Ffastinject) 
+[![xfollow](https://img.shields.io/twitter/follow/mike_huls)](https://twitter.com/intent/follow?screen_name=mike_huls)
 
 [//]: # (|         |                                                                                                                                                                                                                                                                                                                                                               |)
 [//]: # (|---------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|)
