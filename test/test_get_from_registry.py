@@ -5,7 +5,8 @@ from unittest.mock import patch
 import pytest
 
 from src.fastinject import (
-    Registry, get_default_registry,
+    Registry,
+    get_default_registry,
 )
 from test.objects_for_testing import services
 from test.objects_for_testing.service_configs import (
@@ -27,6 +28,7 @@ def test_get_from_registry():
 
 # @patch('src.fastinject.registry.__default_registry', new_callable=lambda: Registry())
 # def test_get_from_registry(reg:Registry):
+
 
 def test_can_get_from_registry_folder_import():
     """The service is imported like folder.Classname in the Module"""

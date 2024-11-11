@@ -57,6 +57,7 @@ class Registry:
 
     def __str__(self) -> str:
         return f"<Registry ({len(self._service_configs)} service configs, {len(self._services)} services)>"
+
     def __repr__(self) -> str:
         return self.__str__()
 

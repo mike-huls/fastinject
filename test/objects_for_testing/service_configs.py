@@ -61,5 +61,5 @@ class SCDatabaseInitFails(ServiceConfig):
     @provider
     def provide_db_connection(self) -> services.DatabaseConnection:
         # FAIL:
-        print(1/0)
+        print(1 / 0)
         return services.DatabaseConnection(dbconfig=self.provide_db_config)
