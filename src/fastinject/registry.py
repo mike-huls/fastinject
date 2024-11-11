@@ -113,6 +113,7 @@ class Registry:
         try:
             return self._injector.get(interface=interface, scope=scope)
         except Exception as e:
+            print(f"exception::::: {type(e)} {e}")
             logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
             return None
 
