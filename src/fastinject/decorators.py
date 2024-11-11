@@ -61,6 +61,10 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                     logger.debug(f"Injecting NONE for the optional parameter '{param_name}'")
                     bound_arguments.arguments[param_name] = None
 
+            print(func)
+            print(bound_arguments.args)
+            print(bound_arguments.kwargs)
+
             return func(*bound_arguments.args, **bound_arguments.kwargs)
 
         return wrapper

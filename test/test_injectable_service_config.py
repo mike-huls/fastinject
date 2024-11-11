@@ -4,8 +4,8 @@ from typing import List, Optional
 import pytest
 from injector import singleton, provider
 
-from src.fastinject import Registry, inject, injectable, ServiceConfig
-from test.objects_for_testing.service_configs_injectable import ModuleLogging, ModuleDatabase
+from src.fastinject import Registry, inject, injectable, ServiceConfig, set_default_registry, get_default_registry
+from test.objects_for_testing.service_configs_injectable import ModuleLogging, ModuleDatabase, ModuleTimestamper
 from test.objects_for_testing.registries import DummyRegistry
 from test.objects_for_testing.services import DatabaseConfig
 from test.objects_for_testing.services_injectable import NotInjectedService, TimeStamp
@@ -15,20 +15,22 @@ class NonRegisteredClass:
     pass
 
 
-@pytest.fixture(scope="function")
-def test_can_inject_with_autobind():
-    # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
-    @inject()
-    def inject_logger_in_fn(_logger: logging.Logger):
-        assert _logger is not None
+# def test_can_inject_with_autobind():
+#
+#     reg_injectable = Registry(auto_bind=True)
+#     set_default_registry(reg_injectable)
+#     print(get_default_registry())
+#     @inject()
+#     def inject_logger_in_fn(_logger: logging.Logger):
+#         assert _logger is not None
+#
+#     # 3. Call decorated functions
+#     inject_logger_in_fn()
 
-    # 3. Call decorated functions
-    inject_logger_in_fn()
 
-
-@pytest.fixture(scope="function")
 def test_sc_catch_error_in_getting_service_from_registry():
-    # 1. Decorate functions to inject from (default) registry. Registry is created with @injectable on service
+    # 1. Prep: make sure only ModuleTimeStamper SC is configured in the registry
+    set_default_registry(Registry(service_configs=[ModuleTimestamper]))
     @inject()
     def injected_fn(noop: NotInjectedService, ts: TimeStamp):
         pass
@@ -37,6 +39,7 @@ def test_sc_catch_error_in_getting_service_from_registry():
     with pytest.raises(TypeError):
         # TimeStamp is correctly decorated with @injectable on service, NotInjectedService is not
         injected_fn()
+    # injected_fn()
 
 
 def test_inject_none_if_error_in_getting_optional_service_from_registry():
@@ -53,7 +56,6 @@ def test_inject_none_if_error_in_getting_optional_service_from_registry():
     injected_fn()
 
 
-@pytest.fixture(scope="function")
 def test_raises_on_injecting_unregisterd_required_object():
     # 2. Decorate functions with registry to inject from
     @inject()
@@ -112,7 +114,6 @@ def test_sc_can_inject_from_with_optional_dependency():
     inject_both()
 
 
-@pytest.fixture(scope="function")
 def test_can_inject_from_with_additional_args():
     @inject()
     def inject_logger_in_fn(_logger: logging.Logger, a: int, b: int = 1, c: Optional[int] = None):
@@ -132,7 +133,6 @@ def test_can_inject_from_with_additional_args():
         inject_logger_in_fn(c=5)
 
 
-@pytest.fixture(scope="function")
 def test_raises_typeerror_on_nonregistered_type_with_injectable():
     """Cannot get type form container that isn't registered; throws"""
 

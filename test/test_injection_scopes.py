@@ -1,12 +1,11 @@
-import logging
-
-import pytest
 from injector import provider, singleton
 
-from src.fastinject import Registry, set_default_registry
+from injector import provider, singleton
+
+from src.fastinject import Registry
 from src.fastinject.service_config import ServiceConfig
 from test.objects_for_testing import services
-from test.objects_for_testing.services import DatabaseConfig, TimeStamp
+from test.objects_for_testing.services import TimeStamp
 
 
 def test_singleton_returns_same_object():

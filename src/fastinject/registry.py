@@ -1,5 +1,6 @@
 from typing import Any, Type, Union, Callable, List, Optional  # , Self,  Iterable
 
+import injector
 from injector import Injector, Binder
 from injector import Scope, ScopeDecorator, Module
 from injector import T
@@ -113,9 +114,14 @@ class Registry:
         """
         try:
             return self._injector.get(interface=interface, scope=scope)
+        # except injector.CallError as e:
+        #     raise e
+        except injector.UnsatisfiedRequirement as e:
+            logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
+            return None
         except Exception as e:
             print(f"exception::::: {type(e)} {e}")
-            logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
+            logger.error(f"Something went wrong getting an instance of {interface} with scope {scope}: {e}")
             return None
 
     def call_with_injection(
