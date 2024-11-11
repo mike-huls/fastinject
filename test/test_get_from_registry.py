@@ -28,7 +28,6 @@ def test_get_from_registry():
 # @patch('src.fastinject.registry.__default_registry', new_callable=lambda: Registry())
 # def test_get_from_registry(reg:Registry):
 
-# @pytest.fixture(scope="function")
 def test_can_get_from_registry_folder_import():
     """The service is imported like folder.Classname in the Module"""
     registry = Registry(service_configs=[SCTimestamperWeirdImport])
