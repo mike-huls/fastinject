@@ -29,7 +29,8 @@ class Registry:
     """
 
     _auto_bind: bool
-    _modules: List[ServiceConfig]
+    _services: List[Type]
+    _service_configs: List[ServiceConfig]
     _setup_functions: List[Callable[[Binder], None]]
 
     def __init__(
@@ -43,7 +44,8 @@ class Registry:
 
         """
         self._auto_bind = auto_bind
-        self._modules: List[ServiceConfig] = []
+        self._service_configs: List[ServiceConfig] = []
+        self._services: List[Type] = []
         self._setup_functions: List[Callable[[Binder], None]] = []
         for service_config in service_configs or []:
             self.add_service_config(service_config=service_config)
@@ -51,16 +53,20 @@ class Registry:
             self.add_service(service=service)
         self.__build()
 
+    def __str__(self):
+        return f"<Registry ({len(self._service_configs)} service configs, {len(self._services)} services)>"
+
     def add_service(self, service: Type, scope: Optional[Scope] = None) -> "Registry":
         def _setup_function(binder: Binder):
             binder.bind(service, to=service, scope=scope)
 
         self._setup_functions.append(_setup_function)
+        self._services.append(service)
         self.__build()
         return self
 
     def add_service_config(self, service_config: _InstallableModuleType) -> "Registry":
-        self._modules.append(service_config)
+        self._service_configs.append(service_config)
         self.__build()
         return self
 
@@ -79,7 +85,7 @@ class Registry:
 
         # setup:ParentListList = [configure]
         setup: List[Callable] = [configure]
-        for m in self._modules:
+        for m in self._service_configs:
             setup.append(m)
 
         # self._injector = Injector([configure_for_testing, di.TestModule()])

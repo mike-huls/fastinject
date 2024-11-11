@@ -55,12 +55,12 @@ def function_with_injection_simple(idgen: IdGenerator):
 if __name__ == "__main__":
     logger.setLevel(level=logging.DEBUG)
     registry = get_default_registry()
-    print(registry._modules)
+    print(registry._service_configs)
     # registry.add_module(module=ServiceConfig)
 
     function_with_injection()
     function_with_injection_simple()
-    print(get_default_registry()._modules)
+    print(get_default_registry()._service_configs)
     print(id(get_default_registry().get(TimeStamp)))
     print(id(get_default_registry().get(TimeStamp)))
     print(id(get_default_registry().get(IdGenerator)))
