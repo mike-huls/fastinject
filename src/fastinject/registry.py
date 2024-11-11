@@ -3,6 +3,8 @@ from typing import Any, Type, Union, Callable, List, Optional  # , Self,  Iterab
 from injector import Injector, Binder
 from injector import Scope, ScopeDecorator, Module
 from injector import T
+
+from . import logger
 from .service_config import ServiceConfig
 
 
@@ -108,7 +110,11 @@ class Registry:
         """
         Gets an instance of T and if it is decorated with @inject or any of the __init__ arguments are wrapped with Inject[...] the dependencies will be injected
         """
-        return self._injector.get(interface=interface, scope=scope)
+        try:
+            return self._injector.get(interface=interface, scope=scope)
+        except Exception as e:
+            logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
+            raise e
 
     def call_with_injection(
         self,
