@@ -123,7 +123,9 @@ class Registry:
         try:
             return self._injector.get(interface=interface, scope=scope)
         except Exception as e:
-            logger.warning(f"Something went wrong getting an instance of {interface} with scope {scope}: {e}. Returning none...")
+            logger.warning(
+                f"Something went wrong getting an instance of {interface} with scope {scope}: {e}. Returning none..."
+            )
             return None
 
     def call_with_injection(
@@ -141,7 +143,7 @@ class Registry:
         return self._injector.call_with_injection(callable, self_, args, kwargs)
 
     def validate(self):
-        service_type:Type
+        service_type: Type
         for service_type in self._services:
             if self.get(service_type) is None:
                 raise ValueError(f"Cannot inject service '{service_type}'")
@@ -150,13 +152,13 @@ class Registry:
             # Inspec the service_config: check out each method
             for name, method in inspect.getmembers(sc, predicate=inspect.isfunction):
                 # Only methods that are decorated with @provider create a __bindings__ attribute on the method
-                if (getattr(method, '__bindings__', None) is None):
+                if getattr(method, "__bindings__", None) is None:
                     continue
-                service_type: Type = get_type_hints(method).get('return')
+                service_type: Type = get_type_hints(method).get("return")
                 if self.get(service_type) is None:
-                    raise ValueError(f"Cannot inject service '{service_type}'; method '{name}' on ServiceConfig '{sc}' cannot be resolved to a valid isntance of '{service_type}'")
-
-
+                    raise ValueError(
+                        f"Cannot inject service '{service_type}'; method '{name}' on ServiceConfig '{sc}' cannot be resolved to a valid isntance of '{service_type}'"
+                    )
 
 
 __default_registry: Optional[Registry] = None

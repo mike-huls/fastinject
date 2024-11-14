@@ -23,8 +23,6 @@ def test_inject_from_default_registry():
     getlogger()
 
 
-
-
 def test_inject_raises_if_module_not_registered_from_default_registry_double():
     """Test example"""
     # 1. Create registry

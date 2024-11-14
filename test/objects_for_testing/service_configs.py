@@ -54,19 +54,22 @@ class SCNestedDependenciesSimple(ServiceConfig):
     def provide_timestamplogger(self) -> services.TimeStampLogger:
         return services.TimeStampLogger(timestamp=self.provide_timestamper())
 
+
 # Needed to test that only methods get validated that are decorated with @provider
 def timer(func):
-  @wraps(func)
-  def wrapper(*args, **kwargs):
-    start = time.perf_counter()
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
 
-    # Call the actual function
-    res = func(*args, **kwargs)
+        # Call the actual function
+        res = func(*args, **kwargs)
 
-    duration = time.perf_counter() - start
-    print(f'[{wrapper.__name__}] took {duration * 1000} ms')
-    return res
-  return wrapper
+        duration = time.perf_counter() - start
+        print(f"[{wrapper.__name__}] took {duration * 1000} ms")
+        return res
+
+    return wrapper
+
 
 class SCDatabaseInitFails(ServiceConfig):
     @provider

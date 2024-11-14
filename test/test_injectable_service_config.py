@@ -31,6 +31,7 @@ class NonRegisteredClass:
 def test_sc_catch_error_in_getting_service_from_registry():
     # 1. Prep: make sure only ModuleTimeStamper SC is configured in the registry
     set_default_registry(Registry(service_configs=[ModuleTimestamper]))
+
     @inject()
     def injected_fn(noop: NotInjectedService, ts: TimeStamp):
         pass

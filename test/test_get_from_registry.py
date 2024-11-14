@@ -54,17 +54,17 @@ def test_get_from_registry_autobind():
     time.sleep(0.001)
     assert ts.time_passed() > 0.0
 
+
 def test_returns_none_in_exception_getting_from_registry():
-    T = TypeVar('T')
+    T = TypeVar("T")
 
     class ErrorScope(Scope):
-        """Scope that thows an error on get """
+        """Scope that thows an error on get"""
 
         def get(self, unused_key: Type[T], provider: Provider[T]) -> Provider[T]:
-            print(1 /0)
+            print(1 / 0)
             return provider
+
     error_scope = ScopeDecorator(ErrorScope)
     registry = Registry(service_configs=[SCTimestamper])
     assert registry.get(TimeStamp, scope=error_scope) is None
-
-

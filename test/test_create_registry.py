@@ -6,8 +6,6 @@ from test.objects_for_testing.service_configs import SCLogging, SCDatabase
 from test.objects_for_testing.services import DatabaseConfig
 
 
-
-
 def test_create_registry_init_works():
     """Test example"""
     registry_builder = Registry()
@@ -18,8 +16,6 @@ def test_create_registry_init_works():
     assert len(registry_builder._service_configs) == 1
     assert str(registry_builder) == f"<Registry (1 service configs, 0 services)>"
     assert repr(registry_builder) == f"<Registry (1 service configs, 0 services)>"
-
-
 
 
 def test_create_registry_pass_modules_in_init_works():

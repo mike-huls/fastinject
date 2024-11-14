@@ -19,7 +19,6 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-
             # Get decorated function's bound_arguments
             bound_arguments = fn_signature.bind_partial(*args, **kwargs)
             bound_arguments.apply_defaults()
@@ -76,7 +75,9 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
         def wrapper(*args, **kwargs):
             target_registry = get_default_registry()
 
-            inject_func = inject_from(registry=target_registry, inject_missing_optional_as_none=inject_missing_optional_as_none)(func)
+            inject_func = inject_from(
+                registry=target_registry, inject_missing_optional_as_none=inject_missing_optional_as_none
+            )(func)
             return inject_func(*args, **kwargs)
 
         return wrapper
