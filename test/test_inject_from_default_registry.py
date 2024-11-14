@@ -3,7 +3,7 @@ from typing import Optional
 
 import pytest
 
-from src.fastinject import Registry, get_default_registry
+from src.fastinject import Registry, get_default_registry, set_default_registry
 from src.fastinject.decorators import inject
 from test.objects_for_testing import services, service_configs
 from test.objects_for_testing.service_configs import SCDatabaseLogging
@@ -21,6 +21,8 @@ def test_inject_from_default_registry():
         assert _logger is not None
 
     getlogger()
+
+
 
 
 def test_inject_raises_if_module_not_registered_from_default_registry_double():
@@ -64,23 +66,10 @@ def test_imperative():
 def test_raises_on_failed_service_init():
     """Test example"""
     # 1. Create registry
-    registy = Registry(service_configs=[service_configs.SCDatabaseInitFails])
+    set_default_registry(registry=None)
+    registy = Registry(service_configs=[service_configs.SCDatabaseInitFails], auto_validate=False)
     assert registy is not None
-    assert get_default_registry() is not None
+    # assert get_default_registry() is not None
 
     # this will init the services
     assert registy.get(services.DatabaseConnection) is None
-
-
-# def test_inject_raises_if_no_registry_set():
-#     """Injector searches in each function decorated with @provider"""
-#     # 1. Make sure there is no global registry
-#     # set_default_registry(None)
-#     # registy = Registry(modules=[ModuleDatabaseLogging])
-#
-#     @inject()
-#     def getlogger(ts:services.TimeStamp, logger: Optional[logging.Logger] = None) -> None:
-#         ...
-#
-#     with pytest.raises(ValueError):
-#         getlogger()

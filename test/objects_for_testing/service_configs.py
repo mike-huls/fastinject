@@ -1,6 +1,8 @@
 import logging
+import time
+from functools import wraps
 
-from src.fastinject import singleton, provider
+from src.fastinject import provider
 from src.fastinject.service_config import ServiceConfig
 from test.objects_for_testing import services
 from test.objects_for_testing.services import DatabaseConfig, TimeStamp
@@ -52,6 +54,19 @@ class SCNestedDependenciesSimple(ServiceConfig):
     def provide_timestamplogger(self) -> services.TimeStampLogger:
         return services.TimeStampLogger(timestamp=self.provide_timestamper())
 
+# Needed to test that only methods get validated that are decorated with @provider
+def timer(func):
+  @wraps(func)
+  def wrapper(*args, **kwargs):
+    start = time.perf_counter()
+
+    # Call the actual function
+    res = func(*args, **kwargs)
+
+    duration = time.perf_counter() - start
+    print(f'[{wrapper.__name__}] took {duration * 1000} ms')
+    return res
+  return wrapper
 
 class SCDatabaseInitFails(ServiceConfig):
     @provider
@@ -63,3 +78,7 @@ class SCDatabaseInitFails(ServiceConfig):
         # FAIL:
         print(1 / 0)
         return services.DatabaseConnection(dbconfig=self.provide_db_config)
+
+    @timer
+    def decorated_with_my_thing(self) -> services.TimeStampLogger:
+        pass

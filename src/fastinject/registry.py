@@ -1,4 +1,5 @@
-from typing import Any, Type, Union, Callable, List, Optional  # , Self,  Iterable
+import inspect
+from typing import Any, Type, Union, Callable, List, Optional, get_type_hints  # , Self,  Iterable
 
 import injector
 from injector import Injector, Binder
@@ -32,6 +33,7 @@ class Registry:
     """
 
     _auto_bind: bool
+    _auto_validate: bool
     _services: List[Type]
     _service_configs: List[ServiceConfig]
     _setup_functions: List[Callable[[Binder], None]]
@@ -41,12 +43,14 @@ class Registry:
         service_configs: Optional[List[_InstallableModuleType]] = None,
         services: Optional[List[_InstallableModuleType]] = None,
         auto_bind: bool = False,
+        auto_validate: bool = True,
     ) -> None:
         """
         auto_bind: bool : if True; will automatically resolve types that it can construct. Looks in all functions decorated with @provider.
 
         """
         self._auto_bind = auto_bind
+        self._auto_validate = auto_validate
         self._service_configs: List[ServiceConfig] = []
         self._services: List[Type] = []
         self._setup_functions: List[Callable[[Binder], None]] = []
@@ -97,6 +101,10 @@ class Registry:
         # self._injector = Injector([configure_for_testing, di.TestModule()])
         self._injector = Injector(setup, auto_bind=self._auto_bind)
         set_default_registry(registry=self)
+
+        # validate
+        if self._auto_validate:
+            self.validate()
         return self
         # result = RegistryDEPRECATED(self._injector)
         # for modifier in self._modifiers:
@@ -114,14 +122,8 @@ class Registry:
         """
         try:
             return self._injector.get(interface=interface, scope=scope)
-        # except injector.CallError as e:
-        #     raise e
-        except injector.UnsatisfiedRequirement as e:
-            logger.warning(f"Failed to get instance of {interface} with scope {scope}: {e}")
-            return None
         except Exception as e:
-            print(f"exception::::: {type(e)} {e}")
-            logger.error(f"Something went wrong getting an instance of {interface} with scope {scope}: {e}")
+            logger.warning(f"Something went wrong getting an instance of {interface} with scope {scope}: {e}. Returning none...")
             return None
 
     def call_with_injection(
@@ -137,6 +139,24 @@ class Registry:
         args = args if args is not None else ()
         kwargs = kwargs if kwargs is not None else {}
         return self._injector.call_with_injection(callable, self_, args, kwargs)
+
+    def validate(self):
+        service_type:Type
+        for service_type in self._services:
+            if self.get(service_type) is None:
+                raise ValueError(f"Cannot inject service '{service_type}'")
+
+        for sc in self._service_configs:
+            # Inspec the service_config: check out each method
+            for name, method in inspect.getmembers(sc, predicate=inspect.isfunction):
+                # Only methods that are decorated with @provider create a __bindings__ attribute on the method
+                if (getattr(method, '__bindings__', None) is None):
+                    continue
+                service_type: Type = get_type_hints(method).get('return')
+                if self.get(service_type) is None:
+                    raise ValueError(f"Cannot inject service '{service_type}'; method '{name}' on ServiceConfig '{sc}' cannot be resolved to a valid isntance of '{service_type}'")
+
+
 
 
 __default_registry: Optional[Registry] = None

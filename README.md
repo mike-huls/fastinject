@@ -116,7 +116,7 @@ FastInject has one major dependency: `injector`. FastInject aims to build on `in
 🔨 Under construction
 
 ## Development
-Find the changelog and list of upcoming features [here](doc/CHANGELOG.md).
+Find the changelog and list of upcoming features [here](CHANGELOG.md).
 <br>
 **Contributions** are always welcome; feel free to submit bug reports, bug fixes, feature requests, documentation improvements or enhancements!
 

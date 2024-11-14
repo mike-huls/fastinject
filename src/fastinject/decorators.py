@@ -19,12 +19,12 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
 
         @wraps(func)
         def wrapper(*args, **kwargs):
+
             # Get decorated function's bound_arguments
             bound_arguments = fn_signature.bind_partial(*args, **kwargs)
             bound_arguments.apply_defaults()
 
-            # Skip params that already have an argument
-            # Check which params misses arguments for us to look up in the registry;
+            # Skip params that already have an argument; Check which params misses arguments for us to look up in the registry;
             for param_name, param_val in fn_signature.parameters.items():
                 is_optional_param: bool = is_optional_type(param_type=param_val.annotation)
                 if param_name in bound_arguments.arguments:
@@ -61,10 +61,6 @@ def inject_from(registry: Optional[Registry] = None, inject_missing_optional_as_
                     logger.debug(f"Injecting NONE for the optional parameter '{param_name}'")
                     bound_arguments.arguments[param_name] = None
 
-            print(func)
-            print(bound_arguments.args)
-            print(bound_arguments.kwargs)
-
             return func(*bound_arguments.args, **bound_arguments.kwargs)
 
         return wrapper
@@ -79,12 +75,8 @@ def inject(inject_missing_optional_as_none: bool = True) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             target_registry = get_default_registry()
-            if target_registry is None:
-                raise ValueError("No registries configured")
 
-            inject_func = inject_from(
-                registry=target_registry, inject_missing_optional_as_none=inject_missing_optional_as_none
-            )(func)
+            inject_func = inject_from(registry=target_registry, inject_missing_optional_as_none=inject_missing_optional_as_none)(func)
             return inject_func(*args, **kwargs)
 
         return wrapper

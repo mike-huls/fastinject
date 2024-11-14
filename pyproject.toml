@@ -1,6 +1,6 @@
 [project]
 name = "fastinject"
-version = "0.0.3"
+version = "0.0.4"
 description = "Easy dependency injection in Python."
 authors = [{ name = "Mike Huls", email = "mikehuls42@gmail.com" }]
 license = { file = "LICENSE" }

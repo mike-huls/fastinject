@@ -1,6 +1,10 @@
 import time
 
 
+class ErrorsOnInit:
+    def __init__(self) -> None:
+        self.attr = 1 / 0
+
 class DatabaseConfig:
     def __init__(self, connection_string: str) -> None:
         self._connection_string = connection_string
