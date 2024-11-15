@@ -16,6 +16,7 @@ def test_eager_loading():
         pass
 
     inject_func = inject_from(registry=registry, inject_missing_optional_as_none=True)(my_func)
+    assert inject_func is not None
     for ding in registry._services:
         print("service", ding, type(ding))
 

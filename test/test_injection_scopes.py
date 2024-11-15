@@ -1,7 +1,5 @@
 from injector import provider, singleton
 
-from injector import provider, singleton
-
 from src.fastinject import Registry
 from src.fastinject.service_config import ServiceConfig
 from test.objects_for_testing import services

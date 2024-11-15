@@ -1,30 +1,14 @@
 import inspect
-from typing import Any, Type, Union, Callable, List, Optional, get_type_hints  # , Self,  Iterable
+from typing import Any, Type, Union, Callable, List, Optional, get_type_hints
 
-import injector
 from injector import Injector, Binder
-from injector import Scope, ScopeDecorator, Module
+from injector import Scope, ScopeDecorator
 from injector import T
 
 from . import logger
 from .service_config import ServiceConfig
 
-
-# _InstallableModuleType = Union[Callable[['XBinder'], None], 'Module', Type['Module']]
-_InstallableModuleType = Union["Service", Type["Service"]]
-
-
-# class XBinder(Binder):
-#     def __init__(self, parent: Binder) -> None:
-#         self._parent = parent
-#
-#     def bind(
-#         self,
-#         interface: Type[T],
-#         to: Union[None, T, Callable[..., T], Provider[T]] = None,
-#         scope: Union[None, Type["Scope"], "ScopeDecorator"] = None,
-#     ) -> None:
-#         self._parent.bind(interface, to, scope)
+_InstallableModuleType = Union["ServiceConfig", Type["ServiceConfig"]]
 
 
 class Registry:
@@ -41,7 +25,7 @@ class Registry:
     def __init__(
         self,
         service_configs: Optional[List[_InstallableModuleType]] = None,
-        services: Optional[List[_InstallableModuleType]] = None,
+        services: Optional[List[Callable]] = None,
         auto_bind: bool = False,
         auto_validate: bool = True,
     ) -> None:
@@ -51,8 +35,8 @@ class Registry:
         """
         self._auto_bind = auto_bind
         self._auto_validate = auto_validate
-        self._service_configs: List[ServiceConfig] = []
-        self._services: List[Type] = []
+        self._service_configs = []
+        self._services = []
         self._setup_functions: List[Callable[[Binder], None]] = []
         for service_config in service_configs or []:
             self.add_service_config(service_config=service_config)
