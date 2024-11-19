@@ -1,4 +1,4 @@
-# FastInject: easy Python dependency injection
+# FastInject: easy, lazy dependency injection for Python
 
 [![coverage](https://img.shields.io/codecov/c/github/mike-huls/fastinject)](https://codecov.io/gh/mike-huls/fastinject)
 [![Tests](https://github.com/mike-huls/fastinject/actions/workflows/tests.yml/badge.svg)](https://github.com/mike-huls/fastinject/actions/workflows/tests.yml)
