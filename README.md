@@ -85,7 +85,7 @@ if __name__ == "__main__":
 ```
 <hr>
 
-## How to use
+## How to
 Injecting services
 - [Register and inject a single service](demo/demo1_inject_single_service.py).
 - [Register and inject a single service as a singleton](demo/demo2_inject_single_service_singleton.py).
