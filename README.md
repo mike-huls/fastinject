@@ -27,7 +27,7 @@ pip install fastinject
 - [License](#license)
 - [Documentation](#documentation)
 - [Development](#development)
-- [Contributing to Cachr](#Development)
+- [Contributing to FastInject](#Development)
 <hr>
 
 ## Main Features
