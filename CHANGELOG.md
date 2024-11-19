@@ -15,6 +15,13 @@ All notable changes to this project will be documented in this file.
 
 ## 2024-10-31 - v0.0.4
 ### Added
+- Demo9: eagerly validate registred services
+### Changed
+- Expanded readme 
+<hr>
+
+## 2024-10-31 - v0.0.4
+### Added
 - `validate` method on register
 - auto_validate attribute on register that is True by default
 - unit tests for validation

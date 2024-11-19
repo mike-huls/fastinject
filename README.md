@@ -11,7 +11,7 @@
 [![xfollow](https://img.shields.io/twitter/follow/mike_huls)](https://twitter.com/intent/follow?screen_name=mike_huls)
 
 
-**FastInject** provides lazy dependency injection for Python that makes you code decoupled, testable, uncomplicated and more readable.
+**FastInject** provides lazy dependency injection for Python that makes your code decoupled, testable, uncomplicated and more readable.
 Decorate your services with the `@injectable` decorator and decorate your function with `@inject`. Done! 
 Your function will now be injected with instances of the required service.
 ```shell
@@ -21,6 +21,7 @@ pip install fastinject
 ## Table of Contents
 - [Main Features](#main-features)
 - [Usage Example](#Usage-example)
+- [How to](#How-to)
 - [Installation](#Installation)
 - [Dependencies](#Dependencies)
 - [License](#license)
@@ -84,7 +85,7 @@ if __name__ == "__main__":
 ```
 <hr>
 
-## How to
+## How to use
 Injecting services
 - [Register and inject a single service](demo/demo1_inject_single_service.py).
 - [Register and inject a single service as a singleton](demo/demo2_inject_single_service_singleton.py).
@@ -102,6 +103,10 @@ Use multiple registries?
 
 Register similar services?
 - [Register multiple services of the same type?](demo/demo8_register_multiple_instances_of_the_same_type.py)
+
+Validation
+- [Validated registered services?](demo/demo9_eagerly_validate.py)
+
 <hr>
 
 
